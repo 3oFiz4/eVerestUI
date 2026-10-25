@@ -18,9 +18,11 @@ npm run lint     # oxlint
 
 | Component | Notes |
 | --------- | ----- |
-| `Button`  | Sharp-cornered (`0px` radius) button. Variants: `primary`, `neutral`, `success`, `caution`, `warning`, `danger`, `info`. |
+| `Button`  | Sharp-cornered (`0px` radius) button. Variants: `primary`, `neutral`, `success`, `caution`, `warning`, `danger`, `info`, `ghost`. Sizes `sm`/`md`/`lg`. |
 | `Card`    | Container that hosts an `Overlay`. |
 | `Overlay` | Stateful GSAP animation layer. See below. |
+
+Live documentation page: run `npm run dev` and open the dev server.
 
 ## Overlay
 
@@ -58,10 +60,20 @@ All effect names and their parameters: [`docs/overlay-effects.md`](docs/overlay-
 
 ## Animation architecture
 
-Every effect is a class extending `AnimationBase` (`mount`, `update`,
-`setPointer`, `destroy`). The base class owns one `gsap.context()` per instance, so
-unmounting reverts every tween it created. Effects declare their host as `svg`,
-`canvas` or `dom`, and the engine rasterises only what the mounted effect needs.
+Every effect is a class extending `AnimationBase` (`mount`, `resize`, `setActive`,
+`setPointer`, `destroy`). Each class declares how it is drawn — `dom`, `svg` or
+`canvas` — and the engine provisions only that, so a text-only effect never
+allocates a bitmap. The base owns one `gsap.context()` per instance, so a single
+`revert()` on unmount kills every tween and ticker it created, and each effect
+only paints while its own state is the live one.
+
+```jsx
+// Geometry and accent come from the host, so this needs no radius or colour.
+<Button variant="danger" radius={0}>
+  <Overlay staticBorderAnimVar="glow" hoverOverlayAnimVar="hyper-triangle-crack" />
+  Delete
+</Button>
+```
 
 ## License
 
