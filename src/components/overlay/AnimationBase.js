@@ -28,6 +28,20 @@ export class AnimationBase {
   constructor(layer, options = {}) {
     this.layer = layer
     this.opts = { ...this.constructor.defaults, ...options }
+    // Unknown option keys are silently dropped by the spread above, which makes a
+    // typo (or a renamed parameter) look like the effect simply ignoring you. Warn
+    // in dev so it surfaces immediately instead.
+    if (import.meta.env?.DEV) {
+      const known = new Set([...Object.keys(this.constructor.defaults), 'radius', 'inset'])
+      for (const key of Object.keys(options)) {
+        if (!known.has(key)) {
+          console.warn(
+            `[eVerestUI] ${this.constructor.name}: unknown parameter "${key}" (ignored). ` +
+              `Known: ${[...known].sort().join(', ')}`
+          )
+        }
+      }
+    }
     this.inset = this.constructor.bleed ? options.inset || 0 : 0
     this.size = { w: 0, h: 0 } // button box
     this.pointer = { x: 0.5, y: 0.5, px: 0, py: 0, inside: false }

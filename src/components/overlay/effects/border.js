@@ -145,7 +145,12 @@ export class Glow extends AnimationBase {
     const cx = w / 2
     const cy = h / 2
     const breathe = 1 + Math.sin(time * Math.PI * 2 * 0.5) * o.pulse
-    const reach = Math.hypot(w, h) / 2 + o.rayLength
+    // The bitmap is rectangular but the rays radiate, so each ray is capped to
+    // the ellipse inscribed in the padded frame. Combined with the gradient
+    // fading to transparent at its own length, rays dissolve by themselves
+    // instead of being chopped at the bitmap border.
+    const rx = w / 2 + this.inset * 0.92
+    const ry = h / 2 + this.inset * 0.92
 
     ctx.save()
     ctx.translate(cx, cy)
@@ -154,7 +159,11 @@ export class Glow extends AnimationBase {
     for (let i = 0; i < Math.max(1, o.rayCount | 0); i++) {
       const a = (i / o.rayCount) * Math.PI * 2
       const half = (Math.PI / o.rayCount) * o.rayWidth
-      const len = reach * (1 - o.lengthJitter * (0.5 + 0.5 * Math.sin(i * 1.7 + time)))
+      const ca = Math.cos(a)
+      const sa = Math.sin(a)
+      const maxLen = 1 / Math.sqrt((ca / rx) ** 2 + (sa / ry) ** 2)
+      const jitter = 1 - o.lengthJitter * (0.5 + 0.5 * Math.sin(i * 1.7 + time))
+      const len = Math.min(maxLen, Math.hypot(w, h) / 2 + o.rayLength) * jitter
       const g = ctx.createRadialGradient(0, 0, Math.min(w, h) * 0.2, 0, 0, len)
       g.addColorStop(0, hexA(o.color, 0.5 * o.intensity * breathe))
       g.addColorStop(0.6, hexA(o.color, 0.12 * o.intensity * breathe))
@@ -179,16 +188,11 @@ export class Glow extends AnimationBase {
 
     ctx.save()
     ctx.globalCompositeOperation = 'lighter'
-    const halo = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.35, cx, cy, reach)
+    const halo = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.35, cx, cy, Math.min(rx, ry))
     halo.addColorStop(0, hexA(o.color, 0.22 * o.intensity * o.spread * breathe))
     halo.addColorStop(1, hexA(o.color, 0))
     ctx.fillStyle = halo
-    ctx.fillRect(
-      -this.inset,
-      -this.inset,
-      w + this.inset * 2,
-      h + this.inset * 2
-    )
+    ctx.fillRect(-this.inset, -this.inset, w + this.inset * 2, h + this.inset * 2)
     ctx.restore()
   }
 }

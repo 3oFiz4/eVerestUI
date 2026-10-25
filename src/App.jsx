@@ -13,10 +13,14 @@ function Section({ id, title, note, children }) {
   )
 }
 
-function Row({ label, children }) {
+function Row({ label, title, children }) {
   return (
-    <div className="flex flex-wrap items-center gap-4 py-3">
-      <span className="w-56 shrink-0 font-mono text-xs text-neutral-500">{label}</span>
+    // Generous vertical padding: border effects deliberately bleed ~40px past the
+    // button, so tight rows would make one animation collide with the next.
+    <div className="flex flex-wrap items-center gap-4 border-b border-neutral-900/60 py-8 last:border-0">
+      <span className="w-44 shrink-0 font-mono text-xs text-neutral-500" title={title}>
+        {label}
+      </span>
       <div className="flex flex-wrap items-center gap-3">{children}</div>
     </div>
   )
@@ -57,7 +61,7 @@ const INNER_EFFECTS = [
   ['halftone', { grid: 13, clip: true }],
   ['line-matrix', { grid: 20, clip: true }],
   ['floating-glow', { mode: 'glow', clip: false, size: 0.7 }],
-  ['ripple', { count: 3, interval: 0.9 }],
+  ['ripple', { count: 3, stagger: 0.6 }],
   ['glitch', { burstsPerSecond: 5 }],
   ['floating-lines', { count: 22, angle: -8 }],
   ['nodes', { count: 26, linkDistance: 58 }],
@@ -154,7 +158,7 @@ export default function App() {
           note="Drawn on the outline. Bleeds outside the button, so halos and rays are never clipped."
         >
           {BORDER_EFFECTS.map(([name, modify], i) => (
-            <Row key={name + i} label={`${name} ${JSON.stringify(modify)}`}>
+            <Row key={name + i} label={name} title={JSON.stringify(modify)}>
               <Button variant={VARIANTS[i % VARIANTS.length]}>
                 {name}
                 <Overlay staticBorderAnimVar={name} staticBorderAnimVarModify={modify} />
@@ -169,7 +173,7 @@ export default function App() {
           note="Drawn inside the silhouette and clipped to it. Effects terminating in '-glow' can opt out with clip:false."
         >
           {INNER_EFFECTS.map(([name, modify], i) => (
-            <Row key={name + i} label={`${name} ${JSON.stringify(modify)}`}>
+            <Row key={name + i} label={name} title={JSON.stringify(modify)}>
               <Button variant={VARIANTS[i % VARIANTS.length]}>
                 {name}
                 <Overlay staticOverlayAnimVar={name} staticOverlayAnimVarModify={modify} />
