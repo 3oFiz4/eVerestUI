@@ -1,82 +1,209 @@
-import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
+import { useHost } from './context.js'
+import { createEngine } from './overlay/engine.js'
+import { resolveEffects } from './overlay/registry.js'
 
-export function Overlay({ variant = 'shine', className = '', count = 6 }) {
-  const containerRef = useRef(null)
+/**
+ * Animation host for any component. Drop it inside a `relative` parent and it
+ * layers effects behind and around the content.
+ *
+ * Six props select an effect per state/layer; each matching `...Modify` object
+ * passes that effect its parameters (see docs/overlay-effects.md).
+ *
+ *   staticBorderAnimVar  staticBorderAnimVarModify   idle,           on the edge
+ *   staticOverlayAnimVar staticOverlayAnimVarModify   idle,           inside
+ *   hoverBorderAnimVar   hoverBorderAnimVarModify     cursor over,    on the edge
+ *   hoverOverlayAnimVar  hoverOverlayAnimVarModify    cursor over,    inside
+ *   activeBorderAnimVar  activeBorderAnimVarModify    pointer down,   on the edge
+ *   activeOverlayAnimVar activeOverlayAnimVarModify   pointer down,   inside
+ *
+ * Border effects draw outside the box (halos, rays) and are given
+ * `borderOverflow` px of room; inner effects are clipped to the silhouette.
+ */
+export function Overlay({
+  className = '',
+  variant, // legacy: sets staticOverlayAnimVar
+  count, // legacy: merged into staticOverlayAnimVarModify
+  staticBorderAnimVar,
+  staticBorderAnimVarModify,
+  staticOverlayAnimVar,
+  staticOverlayAnimVarModify,
+  hoverBorderAnimVar,
+  hoverBorderAnimVarModify,
+  hoverOverlayAnimVar,
+  hoverOverlayAnimVarModify,
+  activeBorderAnimVar,
+  activeBorderAnimVarModify,
+  activeOverlayAnimVar,
+  activeOverlayAnimVarModify,
+  radius,
+  accent,
+  borderOverflow = 40,
+  followPointer = true,
+  ref,
+}) {
+  const host = useHost()
+  const boxRef = useRef(null)
+  const borderRef = useRef(null)
+  const innerRef = useRef(null)
+  const enginesRef = useRef(null)
+  const stateRef = useRef({ hover: false, active: false })
+
+  // Geometry and accent fall back to the host component (e.g. Button variant).
+  const resolvedRadius = radius ?? host.radius ?? 0
+  const resolvedAccent = accent ?? host.accent
+
+  const effects = useMemo(
+    () =>
+      resolveEffects({
+        staticBorderAnimVar,
+        staticBorderAnimVarModify,
+        staticOverlayAnimVar: staticOverlayAnimVar ?? variant,
+        staticOverlayAnimVarModify:
+          count != null ? { count, ...staticOverlayAnimVarModify } : staticOverlayAnimVarModify,
+        hoverBorderAnimVar,
+        hoverBorderAnimVarModify,
+        hoverOverlayAnimVar,
+        hoverOverlayAnimVarModify,
+        activeBorderAnimVar,
+        activeBorderAnimVarModify,
+        activeOverlayAnimVar,
+        activeOverlayAnimVarModify,
+      }),
+    [
+      staticBorderAnimVar,
+      staticBorderAnimVarModify,
+      staticOverlayAnimVar,
+      staticOverlayAnimVarModify,
+      hoverBorderAnimVar,
+      hoverBorderAnimVarModify,
+      hoverOverlayAnimVar,
+      hoverOverlayAnimVarModify,
+      activeBorderAnimVar,
+      activeBorderAnimVarModify,
+      activeOverlayAnimVar,
+      activeOverlayAnimVarModify,
+      variant,
+      count,
+    ]
+  )
 
   useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
+    const border = borderRef.current
+    const inner = innerRef.current
+    if (!border || !inner) return
 
-    const ctx = gsap.context(() => {
-      if (variant === 'shine') {
-        const shineBar = el.querySelector('.overlay-shine')
-        if (shineBar) {
-          gsap.fromTo(
-            shineBar,
-            { xPercent: -150, opacity: 0 },
-            {
-              xPercent: 250,
-              opacity: 1,
-              duration: 2.2,
-              repeat: -1,
-              repeatDelay: 0.8,
-              ease: 'power2.inOut',
-              force3D: true,
-            }
-          )
-        }
-      } else if (variant === 'sparkle') {
-        const sparkles = el.querySelectorAll('.overlay-sparkle')
-        if (sparkles.length) {
-          sparkles.forEach((sparkle, i) => {
-            gsap.set(sparkle, {
-              scale: 0,
-              opacity: 0,
-              rotation: gsap.utils.random(-30, 30),
-              x: gsap.utils.random(-50, 50),
-              y: gsap.utils.random(-40, 40),
-            })
-            gsap.to(sparkle, {
-              scale: () => gsap.utils.random(0.8, 1.4),
-              opacity: () => gsap.utils.random(0.7, 1),
-              rotation: '+=90',
-              duration: () => gsap.utils.random(0.8, 1.4),
-              repeat: -1,
-              yoyo: true,
-              delay: i * 0.25,
-              ease: 'sine.inOut',
-              force3D: true,
-            })
-          })
-        }
-      }
-    }, containerRef)
+    const withHost = effects.map((e) => ({
+      ...e,
+      modify: {
+        radius: resolvedRadius,
+        ...(resolvedAccent ? { color: resolvedAccent } : {}),
+        ...e.modify,
+      },
+    }))
+    const borderEngine = createEngine(
+      border,
+      withHost.filter((e) => e.layer === 'border'),
+      borderOverflow
+    )
+    const innerEngine = createEngine(
+      inner,
+      withHost.filter((e) => e.layer === 'overlay'),
+      0
+    )
+    enginesRef.current = { borderEngine, innerEngine }
+    borderEngine.setState(stateRef.current)
+    innerEngine.setState(stateRef.current)
 
-    return () => ctx.revert()
-  }, [variant, count])
+    return () => {
+      borderEngine.destroy()
+      innerEngine.destroy()
+      enginesRef.current = null
+    }
+  }, [effects, resolvedRadius, resolvedAccent, borderOverflow])
+
+  const sendState = useCallback((next) => {
+    enginesRef.current?.borderEngine.setState(next)
+    enginesRef.current?.innerEngine.setState(next)
+  }, [])
+
+  const sendPointer = useCallback((pointer) => {
+    enginesRef.current?.borderEngine.setPointer(pointer)
+    enginesRef.current?.innerEngine.setPointer(pointer)
+  }, [])
+
+  /**
+   * Events are bound to the HOST element (the nearest positioned ancestor, i.e.
+   * the Button/Card), never to this overlay node: the overlay is
+   * `pointer-events-none` so it cannot intercept clicks, which also means it
+   * would never receive the events itself.
+   */
+  useEffect(() => {
+    const box = boxRef.current
+    const host = box?.parentElement
+    if (!box || !host) return
+
+    const onMove = (event) => {
+      if (!followPointer) return
+      const rect = box.getBoundingClientRect()
+      const x = event.clientX - rect.left
+      const y = event.clientY - rect.top
+      sendPointer({
+        x: rect.width ? x / rect.width : 0.5,
+        y: rect.height ? y / rect.height : 0.5,
+        px: x,
+        py: y,
+        inside: x >= 0 && y >= 0 && x <= rect.width && y <= rect.height,
+      })
+    }
+    const onEnter = () => {
+      stateRef.current = { ...stateRef.current, hover: true }
+      sendState(stateRef.current)
+    }
+    const onLeave = () => {
+      stateRef.current = { hover: false, active: false }
+      sendState(stateRef.current)
+      sendPointer({ x: 0.5, y: 0.5, px: 0, py: 0, inside: false })
+    }
+    const onDown = () => {
+      stateRef.current = { ...stateRef.current, active: true }
+      sendState(stateRef.current)
+    }
+    // pointerup may land anywhere (drag off the button), so it goes on window
+    const onUp = () => {
+      if (!stateRef.current.active) return
+      stateRef.current = { ...stateRef.current, active: false }
+      sendState(stateRef.current)
+    }
+
+    host.addEventListener('pointermove', onMove)
+    host.addEventListener('pointerenter', onEnter)
+    host.addEventListener('pointerleave', onLeave)
+    host.addEventListener('pointerdown', onDown)
+    window.addEventListener('pointerup', onUp)
+    return () => {
+      host.removeEventListener('pointermove', onMove)
+      host.removeEventListener('pointerenter', onEnter)
+      host.removeEventListener('pointerleave', onLeave)
+      host.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('pointerup', onUp)
+    }
+  }, [followPointer, sendPointer, sendState])
+
+  useImperativeHandle(ref, () => ({ setState: sendState, setPointer: sendPointer }), [sendPointer, sendState])
 
   return (
-    <div
-      ref={containerRef}
-      className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
-      aria-hidden="true"
-    >
-      {variant === 'shine' && (
-        <div className="overlay-shine absolute -inset-y-1/2 -left-1/3 w-1/2 -rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent blur-xs" />
-      )}
-      {variant === 'sparkle' && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          {Array.from({ length: count }).map((_, i) => (
-            <span
-              key={i}
-              className="overlay-sparkle absolute text-amber-300 drop-shadow-[0_0_6px_rgba(253,224,71,0.8)] select-none text-lg"
-            >
-              ✦
-            </span>
-          ))}
-        </div>
-      )}
+    <div ref={boxRef} className={`pointer-events-none absolute inset-0 -z-10 ${className}`} aria-hidden="true">
+      <div
+        ref={borderRef}
+        className="absolute"
+        style={{ inset: -borderOverflow, borderRadius: resolvedRadius ? resolvedRadius + borderOverflow : undefined }}
+      />
+      <div
+        ref={innerRef}
+        className="absolute inset-0 overflow-hidden"
+        style={{ borderRadius: resolvedRadius ? `${resolvedRadius}px` : undefined }}
+      />
     </div>
   )
 }
