@@ -42,7 +42,7 @@ export const EFFECTS = {
 }
 
 /** Shorthands, including the floating-glow modes exposed as their own names. */
-const ALIASES = {
+export const ALIASES = {
   'snake-ring': { to: 'snake' },
   'double-snake': { to: 'snake', modify: { count: 2 } },
   'triple-snake': { to: 'snake', modify: { count: 3 } },
