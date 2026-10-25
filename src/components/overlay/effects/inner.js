@@ -144,7 +144,10 @@ export class FloatingGlow extends AnimationBase {
     mode: 'glow',
     clip: true,
     color: '#60a5fa',
-    size: 0.5, // light radius as a fraction of min(w,h)
+    // Falloff radius as a fraction of the button. For 'glow' it is a fraction of
+    // the short side (a ball of light); for 'halftone'/'lines' it is a fraction of
+    // the half-diagonal, so 1 reaches the corners.
+    size: 1,
     intensity: 0.6,
     wanderSpeed: 0.35,
     follow: true, // attractor snaps to the cursor on hover
@@ -169,7 +172,13 @@ export class FloatingGlow extends AnimationBase {
     const ctx = this.ctx2d
     const { w, h } = this.size
     const a = this.attractor.step(dtRatio / 60, this.pointer, o.follow)
-    const R = Math.max(1, Math.min(w, h) * o.size)
+    // 'glow' is a ball of light, so it scales off the short side; the matrix modes
+    // need their falloff to reach across the whole button or only the few cells
+    // nearest the attractor respond and it reads as a blob rather than a grid.
+    const R =
+      o.mode === 'glow'
+        ? Math.max(1, Math.min(w, h) * o.size)
+        : Math.max(1, Math.hypot(w, h) * 0.5 * o.size)
 
     ctx.save()
     if (o.clip) {
@@ -188,16 +197,20 @@ export class FloatingGlow extends AnimationBase {
       ctx.fillRect(-this.inset, -this.inset, w + this.inset * 2, h + this.inset * 2)
     } else if (o.mode === 'halftone') {
       const step = Math.max(4, o.grid)
-      const maxR = step * 0.5 * o.dotScale
+      // Never let a dot exceed half the step, or neighbours merge into a solid
+      // mass and the pattern stops reading as discrete dots.
+      const maxR = step * 0.5 * Math.min(o.dotScale, 1)
       ctx.fillStyle = o.color
       for (let y = step / 2; y < h; y += step) {
         for (let x = step / 2; x < w; x += step) {
           const d = Math.hypot(x - a.x, y - a.y)
           if (d > R) continue
           const f = 1 - d / R
-          ctx.globalAlpha = f * f * a.pulse * o.intensity
+          ctx.globalAlpha = Math.min(1, f * f * a.pulse * o.intensity * 2.4)
+          const rad = maxR * (0.18 + 0.82 * f)
+          if (rad < 0.35) continue
           ctx.beginPath()
-          ctx.arc(x, y, maxR * f, 0, Math.PI * 2)
+          ctx.arc(x, y, rad, 0, Math.PI * 2)
           ctx.fill()
         }
       }
@@ -210,7 +223,7 @@ export class FloatingGlow extends AnimationBase {
         for (let x = step / 2; x < w; x += step) {
           const d = Math.hypot(x - a.x, y - a.y)
           if (d > R) continue
-          ctx.globalAlpha = (1 - d / R) * a.pulse * o.intensity
+          ctx.globalAlpha = Math.min(1, (1 - d / R) * a.pulse * o.intensity * 2.2)
           ctx.beginPath()
           ctx.moveTo(x - step / 2, y - step / 2)
           ctx.lineTo(x + step / 2, y - step / 2)

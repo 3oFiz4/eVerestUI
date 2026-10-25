@@ -170,7 +170,7 @@ Parameters (all optional, shown with defaults):
 - `mode`: string = "glow"
 - `clip`: boolean = true
 - `color`: string = "#60a5fa"
-- `size`: number = 0.5
+- `size`: number = 1
 - `intensity`: number = 0.6
 - `wanderSpeed`: number = 0.35
 - `follow`: boolean = true
