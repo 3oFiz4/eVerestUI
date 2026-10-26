@@ -58,18 +58,21 @@ Parameters (all optional, shown with defaults):
 
 **Where** outline layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
 
-Linear monochrome glow outside the button ring with rotating gradient lightness (bright white to blacker stops).
+Luminous backlight glow with internal drifting clouds casting natural, smooth shades outward across the surrounding light. Hardware-accelerated Gaussian blur.
 
 Parameters (all optional, shown with defaults):
 
 - `gap`: number = 0
 - `radius`: number = 0
 - `color`: string = "#ffffff"
-- `intensity`: number = 0.8
-- `glowSize`: number = 28
-- `rayCount`: number = 24
+- `glowSize`: number = 15
+- `opacity`: number = 0.88
+- `intensity`: number = 0.88
+- `cloudCount`: number = 3
+- `cloudSize`: number = 18
+- `shadeStrength`: number = 0.85
 - `pulse`: number = 0.15
-- `speed`: number = 0.6
+- `speed`: number = 0.5
 
 ### `pulse`
 

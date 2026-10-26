@@ -15,7 +15,7 @@ export function createEngine(layer, entries, inset = 0) {
     instances.push({ state: entry.state, instance })
   }
   if (!instances.length) {
-    return { destroy() {}, setState() {}, setPointer() {} }
+    return { destroy() {}, setState() {}, setPointer() {}, resize() {} }
   }
 
   // Mount in reverse so the first prop listed ends up on top.

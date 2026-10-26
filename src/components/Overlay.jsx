@@ -107,8 +107,8 @@ export function Overlay({
         setParentRadius(br)
       }
 
-      enginesRef.current?.borderEngine.resize()
-      enginesRef.current?.innerEngine.resize()
+      enginesRef.current?.borderEngine?.resize?.()
+      enginesRef.current?.innerEngine?.resize?.()
     }
 
     syncSize()

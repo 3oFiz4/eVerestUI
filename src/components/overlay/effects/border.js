@@ -1,6 +1,6 @@
 import gsap from 'gsap'
 import { AnimationBase } from '../AnimationBase.js'
-import { normalizeRadius, rectPerimeter, roundedRectPath } from '../geometry.js'
+import { mulberry32, normalizeRadius, rectPerimeter, roundedRectPath } from '../geometry.js'
 import { hexA, roundRect } from '../paint.js'
 
 const NS = 'http://www.w3.org/2000/svg'
@@ -89,9 +89,9 @@ export class Snake extends AnimationBase {
 
 /* ------------------------------------------------------------------- glow */
 /**
- * Button glow with volumetric crepuscular rays (sun through clouds).
- * Luminous edge glow with radiating light shafts and shaded gaps,
- * with button silhouette occluded.
+ * Luminous backlight glow with internal drifting clouds that cast
+ * natural, smooth shades outward across the surrounding light.
+ * Rendered with hardware-accelerated Gaussian blur filter (zero banding/rigidity).
  */
 export class Glow extends AnimationBase {
   static host = 'canvas'
@@ -101,12 +101,28 @@ export class Glow extends AnimationBase {
     gap: 0,
     radius: 0,
     color: '#ffffff',
-    intensity: 0.8,
-    glowSize: 28, // px distance the glow and shafts reach outside
-    rayCount: 24, // number of crepuscular ray sectors
-    pulse: 0.15,
-    speed: 0.6,
+    glowSize: 15, // px Gaussian blur radius for outer light (slightly minified)
+    opacity: 0.88,
+    intensity: 0.88, // alias for opacity
+    cloudCount: 3, // drifting cloud blockers
+    cloudSize: 18, // px span of each cloud shade along perimeter
+    shadeStrength: 0.85, // optical density of cloud shadows
+    pulse: 0.15, // breathing light pulse
+    speed: 0.5,
     fade: 0.35,
+  }
+
+  build() {
+    const o = this.opts
+    const n = Math.max(2, o.cloudCount | 0)
+    const rnd = mulberry32(17)
+    // Pre-calculate broad cloud parameters
+    this.clouds = Array.from({ length: n }, (_, i) => ({
+      phase: (i / n) * Math.PI * 2 + rnd() * 0.4,
+      speedX: 0.6 + rnd() * 0.4,
+      speedY: 0.7 + rnd() * 0.4,
+      span: Math.max(12, (o.cloudSize || 18) * (0.85 + rnd() * 0.3)),
+    }))
   }
 
   render(time) {
@@ -114,73 +130,45 @@ export class Glow extends AnimationBase {
     const { w, h } = this.size
     if (w <= 0 || h <= 0) return
     const o = this.opts
-    const cx = w / 2
-    const cy = h / 2
     const r = normalizeRadius(o.radius, w, h)
-    const reach = Math.max(12, o.glowSize || 28)
+    const blurPx = Math.max(5, o.glowSize || 15)
+    const reach = blurPx + 5
     const breathe = 1 + Math.sin(time * Math.PI * 2 * o.speed * 0.5) * o.pulse
-    const maxDiag = Math.hypot(w, h) / 2 + reach
+    const alpha = Math.min(1, (o.opacity ?? o.intensity ?? 0.88) * breathe)
 
+    // 1. Soft, continuous luminous backlight radiating from behind the button
     ctx.save()
-    ctx.globalCompositeOperation = 'lighter'
+    ctx.filter = `blur(${blurPx}px)`
+    ctx.fillStyle = hexA(o.color, alpha)
+    roundRect(ctx, 0, 0, w, h, r.tl, r.tr, r.br, r.bl)
+    ctx.fill()
+    ctx.restore()
 
-    // 1. Crepuscular rays radiating from behind the button
-    const rays = Math.max(8, o.rayCount | 0)
-    const rot = time * o.speed * 0.15 * Math.PI * 2
+    // 2. Natural wide cloud shades extending outward across the glow
+    // Extends past the outer edge so light never loops behind it into a ball
     ctx.save()
-    ctx.translate(cx, cy)
-    ctx.rotate(rot)
+    ctx.globalCompositeOperation = 'destination-out'
+    ctx.filter = `blur(${Math.round(blurPx * 0.65)}px)`
+    ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(1, o.shadeStrength || 0.85)})`
 
-    for (let i = 0; i < rays; i++) {
-      const a = (i / rays) * Math.PI * 2
-      const half = (Math.PI / rays) * 0.45
-      // Shading modulation: harmonic waves create prominent shafts and dark shaded gaps
-      const shaft = Math.sin(i * 1.5 + time * 0.8) * Math.cos(i * 0.7 - time * 0.4)
-      if (shaft < -0.1) continue // shaded gap (void)
+    for (const c of this.clouds) {
+      // Orbital path along the button perimeter
+      const cx = (w / 2) + Math.sin(time * o.speed * c.speedX + c.phase) * (w * 0.5)
+      const cy = (h / 2) + Math.cos(time * o.speed * c.speedY + c.phase) * (h * 0.5)
 
-      const rayAlpha = Math.max(0, Math.min(1, (shaft + 0.1) * 1.2)) * o.intensity * breathe * 0.45
-      const rayLen = Math.min(maxDiag, Math.hypot(w, h) / 2 + reach * (0.7 + 0.3 * shaft))
+      // Radial reach extends from inside the button outward past the glow radius
+      const rx = c.span
+      const ry = reach + 6
+      // Align the shadow orientation to fan outward from the center
+      const angle = Math.atan2(cy - h / 2, cx - w / 2)
 
-      const g = ctx.createRadialGradient(0, 0, Math.min(w, h) * 0.25, 0, 0, rayLen)
-      g.addColorStop(0, hexA(o.color, rayAlpha))
-      g.addColorStop(0.5, hexA(o.color, rayAlpha * 0.4))
-      g.addColorStop(1, hexA(o.color, 0))
-
-      ctx.fillStyle = g
       ctx.beginPath()
-      ctx.moveTo(0, 0)
-      ctx.arc(0, 0, rayLen, a - half, a + half)
-      ctx.closePath()
+      ctx.ellipse(cx, cy, rx, ry, angle, 0, Math.PI * 2)
       ctx.fill()
     }
     ctx.restore()
 
-    // 2. Volumetric button edge glow (layered soft rounded-rect expansion)
-    const steps = 8
-    for (let s = 1; s <= steps; s++) {
-      const frac = s / steps
-      const dist = frac * reach
-      const falloff = (1 - frac) ** 1.8
-      const alpha = Math.max(0, Math.min(1, 0.35 * o.intensity * breathe * falloff))
-      ctx.strokeStyle = hexA(o.color, alpha)
-      ctx.lineWidth = reach / steps + 0.5
-      roundRect(
-        ctx,
-        -dist,
-        -dist,
-        w + dist * 2,
-        h + dist * 2,
-        r.tl ? r.tl + dist : 0,
-        r.tr ? r.tr + dist : 0,
-        r.br ? r.br + dist : 0,
-        r.bl ? r.bl + dist : 0
-      )
-      ctx.stroke()
-    }
-
-    ctx.restore()
-
-    // 3. Occlude the button interior (the cloud blocking the sun)
+    // 3. Occlude button interior so the button's black body remains crisp and clean
     ctx.save()
     ctx.globalCompositeOperation = 'destination-out'
     roundRect(ctx, 0, 0, w, h, r.tl, r.tr, r.br, r.bl)

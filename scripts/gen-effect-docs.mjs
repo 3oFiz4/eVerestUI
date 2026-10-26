@@ -62,7 +62,7 @@ const EFFECT_DESCRIPTIONS = {
   snake:
     'Rotating conic gradient beam travelling continuously along the border without seam interruption, wrap delay, or stopping.',
   glow:
-    'Linear monochrome glow outside the button ring with rotating gradient lightness (bright white to blacker stops).',
+    'Luminous backlight glow with internal drifting clouds casting natural, smooth shades outward across the surrounding light. Hardware-accelerated Gaussian blur.',
   'corner-grid':
     'Four corner L-brackets that animate stroke-dashoffset into position with a staggered sequence on hover.',
   'triangle-lock':
