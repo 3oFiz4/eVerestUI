@@ -1,131 +1,245 @@
-import { useState } from 'react'
-import { Button, Card, Overlay, BUTTON_SIZES, BUTTON_VARIANTS } from './components'
+import { useState } from "react";
+import {
+  Button,
+  Card,
+  Overlay,
+  BUTTON_SIZES,
+  BUTTON_VARIANTS,
+} from "./components";
 
 /* ------------------------------------------------------------------ layout */
 
 function Section({ id, title, note, children }) {
   return (
-    <section id={id} className="scroll-mt-8 border-t border-neutral-800 pt-8">
-      <h2 className="text-base font-bold tracking-tight text-neutral-100">{title}</h2>
-      {note && <p className="mt-1 max-w-2xl text-sm text-neutral-400">{note}</p>}
+    <section id={id} className="scroll-mt-8 border-t border-white/20 pt-8">
+      <h2 className="text-base font-bold tracking-tight text-white">{title}</h2>
+      {note && <p className="mt-1 max-w-2xl text-sm text-white/60">{note}</p>}
       <div className="mt-5">{children}</div>
     </section>
-  )
+  );
 }
 
 function Row({ label, title, children }) {
   return (
     // Generous vertical padding: border effects deliberately bleed ~40px past the
     // button, so tight rows would make one animation collide with the next.
-    <div className="flex flex-wrap items-center gap-4 border-b border-neutral-900/60 py-8 last:border-0">
-      <span className="w-44 shrink-0 font-mono text-xs text-neutral-500" title={title}>
+    <div className="flex flex-wrap items-center gap-4 border-b border-white/10 py-8 last:border-0">
+      <span
+        className="w-48 shrink-0 font-mono text-xs text-white/60"
+        title={title}
+      >
         {label}
       </span>
       <div className="flex flex-wrap items-center gap-3">{children}</div>
     </div>
-  )
+  );
 }
 
 function Code({ children }) {
   return (
-    <pre className="overflow-x-auto border border-neutral-800 bg-neutral-950 p-3 font-mono text-xs text-neutral-300">
+    <pre className="overflow-x-auto border border-white/20 bg-black p-3 font-mono text-xs text-white/90">
       {children}
     </pre>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------- demos */
 
-const VARIANTS = ['primary', 'neutral', 'success', 'caution', 'warning', 'danger', 'info', 'ghost']
-const SIZES = ['sm', 'md', 'lg']
+const VARIANTS = [
+  "default",
+  "secondary",
+  "subtle",
+  "ghost",
+  "dashed",
+  "double",
+  "success",
+  "caution",
+  "warning",
+  "danger",
+  "info",
+];
+const SIZES = ["sm", "md", "lg", "xl"];
 
 /** Every border-layer effect, one per Button variant. */
 const BORDER_EFFECTS = [
-  ['snake', { thickness: 3, tail: 0.16 }],
-  ['double-snake', { thickness: 3, gap: 3 }],
-  ['triple-snake', { thickness: 2, gap: 5 }],
-  ['glow', { rayCount: 32, rayLength: 34, intensity: 0.7 }],
-  ['pulse', { mode: 'hollow', to: 1.2 }],
-  ['pulse', { mode: 'full', to: 1.05, peak: 0.2 }],
-  ['corner-grid', { variant: 'square', size: 14 }],
-  ['corner-grid', { variant: 'ring', speed: 1.2 }],
-  ['triangle-lock', { size: 16 }],
-  ['snake-fill', { thickness: 3, speed: 0.8 }],
-]
+  ["snake", { thickness: 2, tail: 0.22, speed: 0.8 }],
+  ["double-snake", { thickness: 2 }],
+  ["triple-snake", { thickness: 2 }],
+  ["glow", { glowSize: 28, intensity: 0.8 }],
+  ["pulse-hollow", { to: 1.25 }],
+  ["pulse-fill", { to: 1.25 }],
+  ["corner-grid", { arm: 14 }],
+  ["triangle-lock", { size: 10 }],
+  ["snake-fill", { speed: 1 }],
+];
 
 /** Every inner-layer effect. */
 const INNER_EFFECTS = [
-  ['shine', { speed: 1.1 }],
-  ['sparkle', { count: 12, size: 13, stagger: 0.18 }],
-  ['floating-glow', { mode: 'glow', clip: true }],
-  ['halftone', { grid: 13, clip: true }],
-  ['line-matrix', { grid: 20, clip: true }],
-  ['floating-glow', { mode: 'glow', clip: false, size: 0.7 }],
-  ['ripple', { count: 3, stagger: 0.6 }],
-  ['glitch', { burstsPerSecond: 5 }],
-  ['floating-lines', { count: 22, angle: -8 }],
-  ['nodes', { count: 26, linkDistance: 58 }],
-  ['hyper-triangles', { count: 20, fill: true }],
-]
+  ["shine", { speed: 1.1, blur: 2 }],
+  ["sparkle", { size: 16 }],
+  ["floating-glow", { mode: "glow", clip: true }],
+  ["halftone", { grid: 6, unattractedOpacity: 0.08, clip: true }],
+  ["line-matrix", { grid: 6, clip: true }],
+  ["ripple", { auto: true }],
+  ["glitch", { burstsPerSecond: 5 }],
+  ["floating-lines", { count: 10, speed: 28 }],
+  ["nodes", { count: 7, linkDistance: 80 }],
+  ["hyper-triangles", { count: 16 }],
+];
 
 /** Cursor-driven effects. */
 const HOVER_EFFECTS = [
-  ['grid-track', { shape: 'square', cell: 22 }, 'square tile + crosshair'],
-  ['grid-track', { shape: 'circle', cell: 34, grid: false }, 'circle tile, no lattice'],
-  ['hyper-triangle-crack', { branches: 9 }, 'cracks open at the cursor'],
-  ['outer-grid', { boost: 0.2 }, 'surrounding grid 20% lighter'],
-]
+  [
+    "grid-track",
+    { shape: "square", cell: 20, cursorMarker: true },
+    "square tile + crosshair",
+  ],
+  [
+    "grid-track",
+    { shape: "circle", cell: 20, grid: true, cursorMarker: true },
+    "smooth circle tile + cursor dot",
+  ],
+  ["outer-grid", { boost: 0.2 }, "surrounding grid 20% lighter"],
+];
 
 const EFFECT_NAMES = [
   ...BORDER_EFFECTS.map(([n]) => n),
   ...INNER_EFFECTS.map(([n]) => n),
   ...HOVER_EFFECTS.map(([n]) => n),
-]
+];
 
 /* --------------------------------------------------------------------- app */
 
 export default function App() {
   const [combo, setCombo] = useState({
-    border: 'snake',
-    inner: 'halftone',
-    hover: 'grid-track',
-    active: 'ripple',
-  })
+    border: "snake",
+    inner: "halftone",
+    hover: "grid-track",
+    active: "ripple",
+  });
 
   // Read the live effect list straight off the registry so the docs cannot drift.
-  const names = [...new Set(EFFECT_NAMES)]
+  const names = [...new Set(EFFECT_NAMES)];
 
   return (
-    <main className="min-h-screen w-full bg-neutral-950 px-6 py-10 text-neutral-100">
+    <main className="min-h-screen w-full bg-black px-6 py-10 text-white font-mono jetbrains-mono">
       <div className="mx-auto max-w-5xl space-y-10">
-        <header className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">Button</h1>
-          <p className="max-w-2xl text-sm text-neutral-400">
-            {`Sharp-cornered (\u0030px radius) button. Variants ${BUTTON_VARIANTS.length}, sizes ${BUTTON_SIZES.length}. Stateful GSAP overlay effects are layered behind the label via `}
-            <code className="font-mono text-neutral-300">{'<Overlay />'}</code>.
+        <header className="space-y-3">
+          <h1 className="text-3xl font-bold tracking-tight text-white">
+            Button & Overlay System
+          </h1>
+          <p className="max-w-3xl text-sm text-white/70 leading-relaxed">
+            {`Monochrome professional design system. Every button follows a strict black background, crisp white border, and white text pattern. Overlay effects layer stateful animations behind and on the outline while automatically matching the exact size and border-box of any button or parent `}
+            <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+              {"<div />"}
+            </code>
+            .
           </p>
         </header>
 
         <Section
-          id="variants"
-          title="Variants"
-          note="Semantic variants. Each supplies an accent colour that its child Overlay inherits, so effects match the intent without colour plumbing."
+          id="psychology"
+          title="Design & Psychological Foundations"
+          note="Assessment of the professional white-black monochrome aesthetic, ergonomics, and micro-interactions."
         >
-          <Row label="variant">
-            {VARIANTS.map((v) => (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs leading-relaxed text-white/80">
+            <div className="border border-white/20 bg-black p-4 space-y-2">
+              <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                1. Color Authority & Contrast
+              </h3>
+              <p>
+                A pure black base (<code className="text-white">#000000</code>)
+                with a razor-thin 1px white border (
+                <code className="text-white">#ffffff</code>) eliminates
+                chromatic cognitive load. In technical developer tools, color is
+                reserved for deliberate status warnings (success, caution,
+                danger, info), retaining its critical semantic signalling power.
+              </p>
+            </div>
+            <div className="border border-white/20 bg-black p-4 space-y-2">
+              <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                2. Wideness, Height & Fitts's Law
+              </h3>
+              <p>
+                Proportions are anchored to fixed vertical standards (28px
+                toolbar, 36px standard, 40px prominent, 48px hero). Horizontal
+                padding is tuned to ~0.4–0.5x height with 6–8px gaps, ensuring
+                click targets are unmistakable affordances rather than passive
+                tags or unwieldy banners.
+              </p>
+            </div>
+            <div className="border border-white/20 bg-black p-4 space-y-2">
+              <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                3. Micro-Interaction Kinetics
+              </h3>
+              <p>
+                Interactive states provide instant mechanical tactile response:
+                hover applies a subtle 10% white luminance lift (
+                <code className="text-white">hover:bg-white/10</code>), press
+                applies 20% lift plus a 1px physical micro-switch depression (
+                <code className="text-white">active:translate-y-px</code>), and
+                focus features an accessible high-contrast ring.
+              </p>
+            </div>
+            <div className="border border-white/20 bg-black p-4 space-y-2">
+              <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                4. Typography & Halation Control
+              </h3>
+              <p>
+                JetBrains Mono at weight 500 prevents the optical "halation"
+                smear common with pure white text on true black OLED/retina
+                displays, preserving crisp glyph legibility even at dense 11px
+                toolbar scales.
+              </p>
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="variants"
+          title="Button Styles & Variants"
+          note="Every standard button adheres to the black background, white border, and white text pattern. Translucent tinted variants provide status communication."
+        >
+          <Row label="todo2.md reference">
+            <button className="jetbrains-mono font-mono px-4 bg-black text-white border border-white h-10 hover:bg-white/10 active:bg-white/20 active:translate-y-px transition-all duration-150 inline-flex items-center justify-center font-medium">
+              Hello World! (h-10)
+            </button>
+            <button className="jetbrains-mono font-mono px-4 bg-black text-white border border-white h-7 text-xs hover:bg-white/10 active:bg-white/20 active:translate-y-px transition-all duration-150 inline-flex items-center justify-center font-medium">
+              Hello World! (h-7)
+            </button>
+            <button className="jetbrains-mono font-mono px-4 bg-green-500/30 text-white border-green-500 border h-7 text-xs hover:bg-green-500/60 active:bg-green-500/75 active:translate-y-px transition-all duration-150 inline-flex items-center justify-center font-medium">
+              Success! (h-7)
+            </button>
+          </Row>
+          <Row label="monochrome variants">
+            {[
+              "default",
+              "secondary",
+              "subtle",
+              "ghost",
+              "dashed",
+              "double",
+            ].map((v) => (
               <Button key={v} variant={v}>
                 {v}
               </Button>
             ))}
           </Row>
-          <Row label="size">
+          <Row label="status variants">
+            {["success", "caution", "warning", "danger", "info"].map((v) => (
+              <Button key={v} variant={v}>
+                {v}
+              </Button>
+            ))}
+          </Row>
+          <Row label="size hierarchy">
             {SIZES.map((s) => (
               <Button key={s} size={s}>
                 size {s}
               </Button>
             ))}
           </Row>
-          <Row label="state">
+          <Row label="state feedback">
             <Button>default</Button>
             <Button loading>loading</Button>
             <Button disabled>disabled</Button>
@@ -133,7 +247,7 @@ export default function App() {
               fullWidth
             </Button>
           </Row>
-          <Row label="radius">
+          <Row label="corner radius">
             <Button radius={0}>0 (default)</Button>
             <Button radius={4}>4</Button>
             <Button radius={999}>999 (pill)</Button>
@@ -145,7 +259,7 @@ export default function App() {
           title={`Registered effects (${names.length})`}
           note="Names accepted by every *-anim-var prop. Effects marked cursor-driven only answer to the hover/active props."
         >
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1 font-mono text-xs text-neutral-400 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1 font-mono text-xs text-white/60 sm:grid-cols-4">
             {names.map((n) => (
               <span key={n}>{n}</span>
             ))}
@@ -161,7 +275,10 @@ export default function App() {
             <Row key={name + i} label={name} title={JSON.stringify(modify)}>
               <Button variant={VARIANTS[i % VARIANTS.length]}>
                 {name}
-                <Overlay staticBorderAnimVar={name} staticBorderAnimVarModify={modify} />
+                <Overlay
+                  staticBorderAnimVar={name}
+                  staticBorderAnimVarModify={modify}
+                />
               </Button>
             </Row>
           ))}
@@ -174,12 +291,67 @@ export default function App() {
         >
           {INNER_EFFECTS.map(([name, modify], i) => (
             <Row key={name + i} label={name} title={JSON.stringify(modify)}>
-              <Button variant={VARIANTS[i % VARIANTS.length]}>
+              <Button size="xl" variant={VARIANTS[i % VARIANTS.length]}>
                 {name}
-                <Overlay staticOverlayAnimVar={name} staticOverlayAnimVarModify={modify} />
+                <Overlay
+                  staticOverlayAnimVar={name}
+                  staticOverlayAnimVarModify={modify}
+                />
               </Button>
             </Row>
           ))}
+        </Section>
+
+        <Section
+          id="hover-border"
+          title="hoverBorderAnimVar (Cursor Over Outline)"
+          note="Border animations triggered on hover: corner grid expanding to target the button, triangle lock clamping in, and snake fill completing a full rotation."
+        >
+          <Row label="corner-grid (targets button)">
+            <Button variant="default">
+              hover me (corner-grid)
+              <Overlay
+                hoverBorderAnimVar="corner-grid"
+                hoverBorderAnimVarModify={{ size: 10 }}
+              />
+            </Button>
+          </Row>
+          <Row label="triangle-lock (clamps corners)">
+            <Button variant="default">
+              hover me (triangle-lock)
+              <Overlay
+                hoverBorderAnimVar="triangle-lock"
+                hoverBorderAnimVarModify={{ size: 10 }}
+              />
+            </Button>
+          </Row>
+          <Row label="snake-fill (1 full rotation)">
+            <Button variant="default">
+              hover me (snake-fill)
+              <Overlay
+                hoverBorderAnimVar="snake-fill"
+                hoverBorderAnimVarModify={{ speed: 1.2 }}
+              />
+            </Button>
+          </Row>
+          <Row label="pulse-hollow (ring outline)">
+            <Button variant="default">
+              hover me (pulse-hollow)
+              <Overlay
+                hoverBorderAnimVar="pulse-hollow"
+                hoverBorderAnimVarModify={{ to: 1.25 }}
+              />
+            </Button>
+          </Row>
+          <Row label="pulse-fill (button replica)">
+            <Button variant="default">
+              hover me (pulse-fill)
+              <Overlay
+                hoverBorderAnimVar="pulse-fill"
+                hoverBorderAnimVarModify={{ to: 1.25 }}
+              />
+            </Button>
+          </Row>
         </Section>
 
         <Section
@@ -205,29 +377,58 @@ export default function App() {
         <Section
           id="active"
           title="activeBorderAnimVar / activeOverlayAnimVar"
-          note="Pointer down. Press and hold each button."
+          note="Click or press actions: crystalline fracture crack at cursor, fill pulse behind button, shockwave ripple, halftone repel, and grid ripple."
         >
-          <Row label="press and hold">
-            <Button variant="danger">
-              press me
-              <Overlay
-                staticBorderAnimVar="pulse"
-                staticBorderAnimVarModify={{ speed: 0.5 }}
-                hoverBorderAnimVar="corner-grid"
-                activeBorderAnimVar="triangle-lock"
-                activeOverlayAnimVar="ripple"
-                activeOverlayAnimVarModify={{ auto: false, count: 4 }}
-              />
-            </Button>
-            <Button variant="info">
-              hover + press
+          <Row label="hyper-triangle-crack">
+            <Button variant="default">
+              click to crack
               <Overlay
                 staticBorderAnimVar="snake"
-                hoverBorderAnimVar="snake"
-                hoverBorderAnimVarModify={{ count: 4, thickness: 3, speed: 2 }}
-                hoverOverlayAnimVar="grid-track"
-                activeOverlayAnimVar="glitch"
-                activeOverlayAnimVarModify={{ rate: 1 }}
+                activeOverlayAnimVar="hyper-triangle-crack"
+              />
+            </Button>
+          </Row>
+          <Row label="pulse-hollow (ring outline)">
+            <Button variant="default">
+              click to pulse-hollow
+              <Overlay
+                activeBorderAnimVar="pulse-hollow"
+                activeBorderAnimVarModify={{ to: 1.25 }}
+              />
+            </Button>
+          </Row>
+          <Row label="pulse-fill (button replica)">
+            <Button variant="default">
+              click to pulse-fill
+              <Overlay
+                activeBorderAnimVar="pulse-fill"
+                activeBorderAnimVarModify={{ to: 1.25 }}
+              />
+            </Button>
+          </Row>
+          <Row label="halftone (repel & ripple)">
+            <Button variant="default">
+              touch to repel dots
+              <Overlay
+                staticOverlayAnimVar="halftone"
+                staticOverlayAnimVarModify={{ grid: 6 }}
+                activeOverlayAnimVar="halftone"
+                activeOverlayAnimVarModify={{ grid: 6 }}
+              />
+            </Button>
+          </Row>
+          <Row label="ripple (ExperienceCard)">
+            <Button variant="default">
+              click to ripple
+              <Overlay activeOverlayAnimVar="ripple" />
+            </Button>
+          </Row>
+          <Row label="grid-ripple (flush square wave)">
+            <Button variant="default">
+              click to grid-ripple
+              <Overlay
+                activeOverlayAnimVar="grid-ripple"
+                activeOverlayAnimVarModify={{ squareSize: 6, color: "#ffffff" }}
               />
             </Button>
           </Row>
@@ -243,15 +444,15 @@ export default function App() {
               everything
               <Overlay
                 staticBorderAnimVar="glow"
-                staticBorderAnimVarModify={{ rayLength: 22, color: '#fbbf24' }}
+                staticBorderAnimVarModify={{ rayLength: 22, color: "#fbbf24" }}
                 staticOverlayAnimVar="halftone"
-                staticOverlayAnimVarModify={{ grid: 12, color: '#fbbf24' }}
+                staticOverlayAnimVarModify={{ grid: 12, color: "#fbbf24" }}
                 hoverBorderAnimVar="corner-grid"
-                hoverBorderAnimVarModify={{ variant: 'ring' }}
+                hoverBorderAnimVarModify={{ variant: "ring" }}
                 hoverOverlayAnimVar="nodes"
                 hoverOverlayAnimVarModify={{ follow: true, pull: 0.5 }}
                 activeBorderAnimVar="pulse"
-                activeBorderAnimVarModify={{ mode: 'full' }}
+                activeBorderAnimVarModify={{ mode: "full" }}
                 activeOverlayAnimVar="ripple"
                 activeOverlayAnimVarModify={{ auto: false }}
               />
@@ -262,11 +463,13 @@ export default function App() {
         <Section id="recipe" title="Recipes" note="Copy-paste starting points.">
           <div className="space-y-4">
             <div>
-              <p className="mb-2 text-xs text-neutral-500">Danger button that glows and cracks on hover</p>
+              <p className="mb-2 text-xs text-white/60">
+                Danger button that glows and cracks on hover
+              </p>
               <Code>{`<Button variant="danger">
   <Overlay
     staticBorderAnimVar="glow"
-    staticBorderAnimVarModify={{ color: '#f87171', intensity: 0.7 }}
+    staticBorderAnimVarModify={{ color: '#ef4444', intensity: 0.7 }}
     hoverOverlayAnimVar="hyper-triangle-crack"
     activeOverlayAnimVar="ripple"
   />
@@ -274,7 +477,9 @@ export default function App() {
 </Button>`}</Code>
             </div>
             <div>
-              <p className="mb-2 text-xs text-neutral-500">Success button with a data-mesh interior</p>
+              <p className="mb-2 text-xs text-white/60">
+                Success button with a data-mesh interior
+              </p>
               <Code>{`<Button variant="success">
   <Overlay
     staticBorderAnimVar="snake"
@@ -286,14 +491,18 @@ export default function App() {
 </Button>`}</Code>
             </div>
             <div>
-              <p className="mb-2 text-xs text-neutral-500">Interactive playground — click to cycle each layer</p>
+              <p className="mb-2 text-xs text-white/60">
+                Interactive playground — click to cycle each layer
+              </p>
               <div className="flex items-center gap-3">
-                {['border', 'inner', 'hover', 'active'].map((k) => (
+                {["border", "inner", "hover", "active"].map((k) => (
                   <select
                     key={k}
                     value={combo[k]}
-                    onChange={(e) => setCombo((c) => ({ ...c, [k]: e.target.value }))}
-                    className="border border-neutral-700 bg-neutral-900 px-2 py-1 font-mono text-xs text-neutral-200"
+                    onChange={(e) =>
+                      setCombo((c) => ({ ...c, [k]: e.target.value }))
+                    }
+                    className="border border-white/40 bg-black px-2 py-1 font-mono text-xs text-white"
                   >
                     {names.map((n) => (
                       <option key={n} value={n}>
@@ -304,7 +513,7 @@ export default function App() {
                 ))}
               </div>
               <div className="mt-3">
-                <Button variant="primary" size="lg">
+                <Button variant="default" size="lg">
                   {combo.border} / {combo.inner}
                   <Overlay
                     staticBorderAnimVar={combo.border}
@@ -318,38 +527,66 @@ export default function App() {
           </div>
         </Section>
 
-        <Section id="api" title="Props" note="Button accepts native button attributes; Overlay takes the six effect props.">
+        <Section
+          id="api"
+          title="Props"
+          note="Button accepts native button attributes; Overlay takes the six effect props."
+        >
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-xs">
-              <thead className="text-neutral-500">
-                <tr className="border-b border-neutral-800">
+              <thead className="text-white/60">
+                <tr className="border-b border-white/20">
                   <th className="py-2 pr-4 font-normal">prop</th>
                   <th className="py-2 pr-4 font-normal">type</th>
                   <th className="py-2 font-normal">notes</th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-neutral-300">
+              <tbody className="font-mono text-white/90">
                 {[
-                  ['variant', `'${BUTTON_VARIANTS.join("' | '")}'`, "'primary'"],
-                  ['size', `'${BUTTON_SIZES.join("' | '")}'`, "'md'"],
-                  ['radius', 'number', '0 — sharp corners by design'],
-                  ['loading', 'boolean', 'spinner + disables'],
-                  ['disabled', 'boolean', ''],
-                  ['fullWidth', 'boolean', ''],
-                  ['staticBorderAnimVar', 'string', 'idle, outline layer'],
-                  ['staticOverlayAnimVar', 'string', 'idle, inner layer'],
-                  ['hoverBorderAnimVar', 'string', 'cursor over, outline layer'],
-                  ['hoverOverlayAnimVar', 'string', 'cursor over, inner layer'],
-                  ['activeBorderAnimVar', 'string', 'pointer down, outline layer'],
-                  ['activeOverlayAnimVar', 'string', 'pointer down, inner layer'],
-                  ['*Modify', 'object', 'parameters for the matching effect'],
-                  ['borderOverflow', 'number', '40 — px of bleed room for border effects'],
-                  ['followPointer', 'boolean', 'true — effects receive the cursor position'],
+                  [
+                    "variant",
+                    `'${BUTTON_VARIANTS.join("' | '")}'`,
+                    "'default'",
+                  ],
+                  ["size", `'${BUTTON_SIZES.join("' | '")}'`, "'md'"],
+                  ["radius", "number", "0 — sharp corners by default"],
+                  ["loading", "boolean", "spinner + disables"],
+                  ["disabled", "boolean", ""],
+                  ["fullWidth", "boolean", ""],
+                  ["staticBorderAnimVar", "string", "idle, outline layer"],
+                  ["staticOverlayAnimVar", "string", "idle, inner layer"],
+                  [
+                    "hoverBorderAnimVar",
+                    "string",
+                    "cursor over, outline layer",
+                  ],
+                  ["hoverOverlayAnimVar", "string", "cursor over, inner layer"],
+                  [
+                    "activeBorderAnimVar",
+                    "string",
+                    "pointer down, outline layer",
+                  ],
+                  [
+                    "activeOverlayAnimVar",
+                    "string",
+                    "pointer down, inner layer",
+                  ],
+                  ["*Modify", "object", "parameters for the matching effect"],
+                  [
+                    "borderOverflow",
+                    "number",
+                    "40 — px of bleed room for border effects",
+                  ],
+                  [
+                    "followPointer",
+                    "boolean",
+                    "true — effects receive the cursor position",
+                  ],
                 ].map(([p, t, n]) => (
-                  <tr key={p} className="border-b border-neutral-900">
+                  <tr key={p} className="border-b border-white/10">
                     <td className="py-2 pr-4">{p}</td>
-                    <td className="py-2 pr-4 text-neutral-500">{t}</td>
-                    <td className="py-2 font-sans text-neutral-500">{n}</td>
+                    <td className="py-2 pr-4 text-white/60">{t}</td>
+                    <td className="py-2 font-sans text-white/60">{n}</td>
                   </tr>
                 ))}
               </tbody>
@@ -357,8 +594,43 @@ export default function App() {
           </div>
         </Section>
 
-        <Section id="cards" title="Hosts other than Button" note="Card provides the same context, so effects inherit its radius.">
-          <Row label="Card">
+        <Section
+          id="hosts"
+          title="Arbitrary Parent Div Hosting (Instruction 2)"
+          note="The Overlay dynamically detects parent bounds, forces positioning context if static, and always matches the parent's exact border-box size and corner radius."
+        >
+          <Row label="Plain Div (Unpositioned)">
+            <div className="w-80 h-28 border border-white p-4 flex flex-col justify-center items-center text-center bg-black">
+              <Overlay
+                staticBorderAnimVar="snake"
+                staticBorderAnimVarModify={{ thickness: 2, speed: 1.2 }}
+                staticOverlayAnimVar="halftone"
+                staticOverlayAnimVarModify={{ grid: 14 }}
+              />
+              <span className="text-xs font-bold text-white tracking-wider uppercase">
+                Unpositioned Div Host
+              </span>
+              <span className="text-[11px] text-white/60 mt-1">
+                320x112px • Perfect border-box match
+              </span>
+            </div>
+          </Row>
+          <Row label="Rounded Div Host">
+            <div className="w-80 h-24 border-2 border-white/60 rounded-xl p-4 flex flex-col justify-center items-center text-center bg-black">
+              <Overlay
+                staticBorderAnimVar="snake"
+                staticBorderAnimVarModify={{ thickness: 2 }}
+                hoverOverlayAnimVar="grid-track"
+              />
+              <span className="text-xs font-bold text-white tracking-wider uppercase">
+                Rounded Div (rounded-xl)
+              </span>
+              <span className="text-[11px] text-white/60 mt-1">
+                Auto-inherits border-radius & border width
+              </span>
+            </div>
+          </Row>
+          <Row label="Card Component">
             <Card>
               <Overlay
                 staticBorderAnimVar="glow"
@@ -366,13 +638,15 @@ export default function App() {
                 staticOverlayAnimVarModify={{ count: 10 }}
               />
               <div className="relative z-10 space-y-2">
-                <h3 className="text-lg font-bold">Card</h3>
-                <p className="text-sm text-neutral-400">Glow outline, sparkle interior</p>
+                <h3 className="text-lg font-bold text-white">Card</h3>
+                <p className="text-sm text-white/60">
+                  Glow outline, sparkle interior
+                </p>
               </div>
             </Card>
           </Row>
         </Section>
       </div>
     </main>
-  )
+  );
 }

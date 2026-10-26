@@ -41,10 +41,16 @@ export function createEngine(layer, entries, inset = 0) {
   apply()
 
   return {
+    resize() {
+      setSize()
+    },
     setState(next) {
       state.hover = !!next.hover
       state.active = !!next.active
       apply()
+      for (const item of instances) {
+        item.instance.onHostState?.(next)
+      }
     },
     setPointer(pointer) {
       for (const item of instances) item.instance.setPointer(pointer)

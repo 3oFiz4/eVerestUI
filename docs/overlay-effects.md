@@ -23,20 +23,21 @@ These set `staticBorderAnimVar`, `hoverBorderAnimVar` or `activeBorderAnimVar`. 
 
 ### `snake`
 
-**Where** outline layer · **States** `static*`, `hover*`, `active*` · **Renders on** SVG — transforms and dash offsets only
+**Where** outline layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
+
+Rotating conic gradient beam travelling continuously along the border without seam interruption, wrap delay, or stopping.
 
 Parameters (all optional, shown with defaults):
 
-- `gap`: number = 2
+- `gap`: number = 0
 - `thickness`: number = 2
 - `radius`: number = 0
 - `count`: number = 1
-- `tail`: number = 0.14
-- `speed`: number = 1
+- `tail`: number = 0.22
+- `speed`: number = 0.8
 - `direction`: number = 1
 - `color`: string = "#7dd3fc"
 - `headColor`: string = "#ffffff"
-- `midStop`: number = 0.7
 - `glow`: number = 4
 
 ### `snake-fill`
@@ -48,44 +49,49 @@ Parameters (all optional, shown with defaults):
 - `gap`: number = 2
 - `thickness`: number = 2
 - `radius`: number = 0
-- `color`: string = "#a5b4fc"
+- `color`: string = "#ffffff"
 - `start`: number = 0
-- `hold`: number = 0.25
-- `speed`: number = 0.6
+- `speed`: number = 1
 - `glow`: number = 4
 
 ### `glow`
 
 **Where** outline layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
 
+Linear monochrome glow outside the button ring with rotating gradient lightness (bright white to blacker stops).
+
 Parameters (all optional, shown with defaults):
 
 - `gap`: number = 0
 - `radius`: number = 0
-- `color`: string = "#ffd66b"
-- `intensity`: number = 0.55
+- `color`: string = "#ffffff"
+- `intensity`: number = 0.8
+- `glowSize`: number = 28
 - `rayCount`: number = 24
-- `rayLength`: number = 26
-- `rayWidth`: number = 0.5
-- `spread`: number = 1
-- `rotate`: number = 0.05
 - `pulse`: number = 0.15
-- `lengthJitter`: number = 0.25
+- `speed`: number = 0.6
 
 ### `pulse`
 
 **Where** outline layer · **States** `static*`, `hover*`, `active*` · **Renders on** SVG — transforms and dash offsets only
+
+Two distinct pulse modes:
+- `mode: "hollow"` (default): pulses only the button outline ring, expanding outward and fading to transparent.
+- `mode: "full"` (fill pulse): pulses a replica of the full button surface (fill + border) placed behind the button, enlarging to `to` scale until becoming transparent on click or loop.
+
+Aliases: `pulse-hollow` and `pulse-fill`.
 
 Parameters (all optional, shown with defaults):
 
 - `mode`: string = "hollow"
 - `gap`: number = 0
 - `radius`: number = 0
-- `thickness`: number = 2
+- `thickness`: number = 1.5
 - `color`: string = "#ffffff"
+- `fillColor`: undefined = undefined
 - `from`: number = 1
-- `to`: number = 1.12
-- `peak`: number = 0.35
+- `to`: number = 1.25
+- `peak`: number = 0.8
 - `speed`: number = 0.8
 - `count`: number = 1
 
@@ -93,32 +99,32 @@ Parameters (all optional, shown with defaults):
 
 **Where** outline layer · **States** `static*`, `hover*`, `active*` · **Renders on** SVG — transforms and dash offsets only
 
+Four corner L-brackets that animate stroke-dashoffset into position with a staggered sequence on hover.
+
 Parameters (all optional, shown with defaults):
 
-- `variant`: string = "square"
-- `size`: number = 10
+- `arm`: number = 14
 - `thickness`: number = 2
 - `gap`: number = 0
 - `radius`: number = 0
-- `color`: string = "#e5e7eb"
-- `speed`: number = 0.6
-- `reach`: number = 1.18
-- `dash`: string = "2 4"
+- `color`: string = "#ffffff"
+- `bgFill`: string = "rgba(255, 255, 255, 0.1)"
+- `speed`: number = 1
 
 ### `triangle-lock`
 
 **Where** outline layer · **States** `static*`, `hover*`, `active*` · **Renders on** SVG — transforms and dash offsets only
 
+Four right triangles positioned at the corners that emerge straight out of each corner on hover.
+
 Parameters (all optional, shown with defaults):
 
-- `size`: number = 14
+- `size`: number = 10
 - `gap`: number = 0
 - `radius`: number = 0
-- `color`: string = "#fca5a5"
-- `opacity`: number = 0.85
+- `color`: string = "#ffffff"
+- `opacity`: number = 0.9
 - `speed`: number = 0.8
-- `pulse`: number = 0.2
-- `offset`: number = 0
 
 
 ## Interior effects
@@ -150,20 +156,19 @@ Parameters (all optional, shown with defaults):
 
 - `color`: string = "#fde047"
 - `glyph`: string = "✦"
-- `count`: number = 6
-- `size`: number = 18
-- `minScale`: number = 0.6
-- `maxScale`: number = 1.4
-- `stagger`: number = 0.25
-- `duration`: number = 1.1
+- `size`: number = 16
+- `duration`: number = 0.65
+- `delay`: number = 0.35
 - `intensity`: number = 1
-- `spread`: number = 0.6
+- `spread`: number = 0.75
 - `glow`: number = 6
 - `speed`: number = 1
 
 ### `floating-glow`
 
 **Where** inner layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
+
+Attractor light that highlights the nearest section of the button ring in a gradient. Modes: glow, halftone (tiny micro-dots with configurable unattractedOpacity), lines (tiny grid).
 
 Parameters (all optional, shown with defaults):
 
@@ -174,26 +179,24 @@ Parameters (all optional, shown with defaults):
 - `intensity`: number = 0.6
 - `wanderSpeed`: number = 0.35
 - `follow`: boolean = true
-- `grid`: number = 16
-- `dotScale`: number = 1.6
-- `lineWidth`: number = 1
+- `grid`: number = 6
+- `unattractedOpacity`: number = 0.08
+- `dotScale`: number = 1
+- `lineWidth`: number = 0.75
 - `radius`: number = 0
 
 ### `ripple`
 
-**Where** inner layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
+**Where** inner layer · **States** `static*`, `hover*`, `active*` · **Renders on** DOM — transform/opacity tweens
+
+Shockwave ripple with central glowing core and expanding ring, spawning on click or idle (from ExperienceCard).
 
 Parameters (all optional, shown with defaults):
 
-- `color`: string = "#93c5fd"
-- `count`: number = 3
-- `duration`: number = 2.2
-- `thickness`: number = 1.5
-- `maxScale`: number = 1.6
-- `intensity`: number = 0.6
+- `color`: string = "#ffffff"
+- `maxActive`: number = 5
 - `auto`: boolean = true
-- `follow`: boolean = true
-- `stagger`: number = 0.4
+- `idleDelay`: number = 4.5
 
 ### `glitch`
 
@@ -210,37 +213,41 @@ Parameters (all optional, shown with defaults):
 - `blockMin`: number = 8
 - `blockMax`: number = 40
 - `intensity`: number = 0.5
-- `scanlines`: boolean = true
+- `scanlines`: boolean = false
 - `scanGap`: number = 3
-- `scanOpacity`: number = 0.25
+- `scanOpacity`: number = 0
 - `life`: number = 0.18
 
 ### `floating-lines`
 
 **Where** inner layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
 
+Infinite-height vertical rods (1px) representing a rotating 3D cylinder cage moving over the x-axis with front/back depth shading.
+
 Parameters (all optional, shown with defaults):
 
-- `color`: string = "#a78bfa"
-- `count`: number = 14
-- `speed`: number = 40
-- `speedVariance`: number = 0.8
+- `color`: string = "#ffffff"
+- `count`: number = 10
+- `speed`: number = 28
+- `rotSpeed`: number = 0.8
+- `cylinderRadius`: number = 36
 - `thickness`: number = 1
-- `opacity`: number = 0.6
-- `opacityVariance`: number = 0.5
-- `angle`: number = 0
-- `widthScale`: number = 1
+- `opacity`: number = 0.7
+- `clip`: boolean = true
+- `radius`: number = 0
 
 ### `nodes`
 
 **Where** inner layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
 
+Drifting points with proximity links. Nodes can move outside the button boundary and spring back naturally.
+
 Parameters (all optional, shown with defaults):
 
 - `color`: string = "#34d399"
-- `count`: number = 18
-- `linkDistance`: number = 70
-- `speed`: number = 12
+- `count`: number = 7
+- `linkDistance`: number = 80
+- `speed`: number = 14
 - `nodeRadius`: number = 1.5
 - `linkWidth`: number = 1
 - `opacity`: number = 0.7
@@ -251,21 +258,22 @@ Parameters (all optional, shown with defaults):
 
 **Where** inner layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
 
+Full-coverage moving triangular tessellation covering 100% of the overlay silhouette without null area. Non-overlapping triangles with random opacity strictly between 10% and 30%.
+
 Parameters (all optional, shown with defaults):
 
 - `color`: string = "#f472b6"
 - `count`: number = 16
-- `linkDistance`: number = 90
-- `speed`: number = 10
+- `columns`: number = 4
+- `speed`: number = 0.8
 - `linkWidth`: number = 1
-- `fill`: boolean = true
-- `fillMin`: number = 0.04
+- `fillMin`: number = 0.1
 - `fillMax`: number = 0.3
-- `minArea`: number = 220
-- `opacity`: number = 0.6
+- `opacity`: number = 0.8
 - `follow`: boolean = true
-- `pull`: number = 0.3
-- `linksOnly`: boolean = false
+- `pull`: number = 0.25
+- `clip`: boolean = true
+- `radius`: number = 0
 
 
 ## Cursor-driven effects
@@ -276,35 +284,57 @@ These only answer to the hover and active props — at rest there is no cursor t
 
 **Where** inner layer · **States** `hover*`, `active*` · **Renders on** canvas — rasterised per frame
 
+Lattice grid and crosshair lines with smooth follower and dedicated cursor marker.
+
 Parameters (all optional, shown with defaults):
 
 - `color`: string = "#e5e7eb"
 - `opacity`: number = 0.5
-- `cell`: number = 24
-- `shape`: string = "square"
+- `cell`: number = 20
+- `shape`: string = "circle"
 - `tileScale`: number = 1
 - `radius`: number = 2
+- `snap`: boolean = false
 - `grid`: boolean = true
-- `gridOpacity`: number = 0.5
+- `gridOpacity`: number = 0.35
+- `cursorMarker`: boolean = true
+- `cursorShape`: string = "circle"
+- `cursorSize`: number = 4
 - `lineWidth`: number = 1
-- `ease`: number = 0.18
+- `ease`: number = 0.22
 
 ### `hyper-triangle-crack`
 
 **Where** inner layer · **States** `hover*`, `active*` · **Renders on** canvas — rasterised per frame
 
+Active/click effect: crystalline hyper-triangles branching along the length of crack fissures, focused at the click cursor.
+
 Parameters (all optional, shown with defaults):
 
 - `color`: string = "#f472b6"
-- `branches`: number = 7
-- `reach`: number = 0.6
+- `branches`: number = 6
+- `reach`: number = 110
+- `duration`: number = 1.15
+- `thickness`: number = 1
+- `opacity`: number = 0.85
+
+### `grid-ripple`
+
+**Where** inner layer · **States** `active*`, `hover*` · **Renders on** canvas — rasterised per frame
+
+Active/click raster shockwave: expanding gridded circle of tiny squares along the circumference, fading to 100% transparent and deleting itself. Configurable color.
+
+Parameters (all optional, shown with defaults):
+
+- `color`: string = "#ffffff"
+- `squareSize`: number = 6
 - `speed`: number = 1
-- `thickness`: number = 1.2
-- `opacity`: number = 0.8
-- `wobble`: number = 0.35
-- `segments`: number = 6
-- `follow`: boolean = true
-- `ease`: number = 0.18
+- `duration`: number = 1.15
+- `maxScale`: number = 1.3
+- `opacity`: number = 0.85
+- `gap`: number = 0
+- `clip`: boolean = true
+- `radius`: number = 0
 
 ### `outer-grid`
 
@@ -312,13 +342,12 @@ Parameters (all optional, shown with defaults):
 
 Parameters (all optional, shown with defaults):
 
-- `color`: string = "#94a3b8"
-- `opacity`: number = 0.25
-- `cell`: number = 28
-- `boost`: number = 0.2
-- `inner`: number = 0.15
-- `spread`: number = 0.5
-- `lineWidth`: number = 1
+- `color`: string = "#ffffff"
+- `opacity`: number = 0.45
+- `cell`: number = 20
+- `arm`: number = 6
+- `radius`: number = 0
+- `reach`: number = 0.85
 
 
 ## Aliases
@@ -329,12 +358,16 @@ Parameters (all optional, shown with defaults):
 | `double-snake` | snake (count: 2) |
 | `triple-snake` | snake (count: 3) |
 | `snake-fill` | snake-fill |
+| `pulse-fill` | pulse (mode: "full") |
+| `pulse-hollow` | pulse (mode: "hollow") |
 | `halftone` | floating-glow (mode: "halftone") |
 | `dots` | floating-glow (mode: "halftone") |
 | `line-matrix` | floating-glow (mode: "lines") |
 | `lines` | floating-lines |
 | `triangles` | hyper-triangles |
 | `crack` | hyper-triangle-crack |
+| `raster-ripple` | grid-ripple |
+| `pixel-ripple` | grid-ripple |
 | `corners` | corner-grid |
 
 Setting any effect prop to `null`, `undefined`, `""`, `false` or `"none"` removes

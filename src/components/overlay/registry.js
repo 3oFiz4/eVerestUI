@@ -1,5 +1,5 @@
 import { CornerGrid, Glow, Pulse, Snake, SnakeFill, TriangleLock } from './effects/border.js'
-import { GridTrack, HyperTriangleCrack, OuterGrid } from './effects/hover.js'
+import { GridRipple, GridTrack, HyperTriangleCrack, OuterGrid } from './effects/hover.js'
 import {
   FloatingGlow,
   FloatingLines,
@@ -38,6 +38,7 @@ export const EFFECTS = {
   /* pointer-only */
   'grid-track': { Effect: GridTrack, states: ['hover', 'active'] },
   'hyper-triangle-crack': { Effect: HyperTriangleCrack, states: ['hover', 'active'] },
+  'grid-ripple': { Effect: GridRipple, states: ['active', 'hover'] },
   'outer-grid': { Effect: OuterGrid, states: ['hover', 'active'] },
 }
 
@@ -47,12 +48,16 @@ export const ALIASES = {
   'double-snake': { to: 'snake', modify: { count: 2 } },
   'triple-snake': { to: 'snake', modify: { count: 3 } },
   'snake-fill': { to: 'snake-fill' },
+  'pulse-fill': { to: 'pulse', modify: { mode: 'full' } },
+  'pulse-hollow': { to: 'pulse', modify: { mode: 'hollow' } },
   halftone: { to: 'floating-glow', modify: { mode: 'halftone' } },
   dots: { to: 'floating-glow', modify: { mode: 'halftone' } },
   'line-matrix': { to: 'floating-glow', modify: { mode: 'lines' } },
   lines: { to: 'floating-lines' },
   triangles: { to: 'hyper-triangles' },
   crack: { to: 'hyper-triangle-crack' },
+  'raster-ripple': { to: 'grid-ripple' },
+  'pixel-ripple': { to: 'grid-ripple' },
   corners: { to: 'corner-grid' },
 }
 

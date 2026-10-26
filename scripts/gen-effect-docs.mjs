@@ -53,6 +53,38 @@ for (const r of rows) {
   byLayer[bucket].push(r)
 }
 
+const EFFECT_DESCRIPTIONS = {
+  pulse:
+    'Two distinct pulse modes:\n' +
+    '- `mode: "hollow"` (default): pulses only the button outline ring, expanding outward and fading to transparent.\n' +
+    '- `mode: "full"` (fill pulse): pulses a replica of the full button surface (fill + border) placed behind the button, enlarging to `to` scale until becoming transparent on click or loop.\n\n' +
+    'Aliases: `pulse-hollow` and `pulse-fill`.',
+  snake:
+    'Rotating conic gradient beam travelling continuously along the border without seam interruption, wrap delay, or stopping.',
+  glow:
+    'Linear monochrome glow outside the button ring with rotating gradient lightness (bright white to blacker stops).',
+  'corner-grid':
+    'Four corner L-brackets that animate stroke-dashoffset into position with a staggered sequence on hover.',
+  'triangle-lock':
+    'Four right triangles positioned at the corners that emerge straight out of each corner on hover.',
+  'floating-glow':
+    'Attractor light that highlights the nearest section of the button ring in a gradient. Modes: glow, halftone (tiny micro-dots with configurable unattractedOpacity), lines (tiny grid).',
+  ripple:
+    'Shockwave ripple with central glowing core and expanding ring, spawning on click or idle (from ExperienceCard).',
+  'floating-lines':
+    'Infinite-height vertical rods (1px) representing a rotating 3D cylinder cage moving over the x-axis with front/back depth shading.',
+  nodes:
+    'Drifting points with proximity links. Nodes can move outside the button boundary and spring back naturally.',
+  'hyper-triangles':
+    'Full-coverage moving triangular tessellation covering 100% of the overlay silhouette without null area. Non-overlapping triangles with random opacity strictly between 10% and 30%.',
+  'grid-track':
+    'Lattice grid and crosshair lines with smooth follower and dedicated cursor marker.',
+  'hyper-triangle-crack':
+    'Active/click effect: crystalline hyper-triangles branching along the length of crack fissures, focused at the click cursor.',
+  'grid-ripple':
+    'Active/click raster shockwave: expanding gridded circle of tiny squares along the circumference, fading to 100% transparent and deleting itself. Configurable color.',
+}
+
 const section = (title, note, list) =>
   `## ${title}\n\n${note}\n\n${list
     .map(
@@ -61,6 +93,7 @@ const section = (title, note, list) =>
         `**Where** ${r.kind === 'border' ? 'outline layer' : 'inner layer'} · ` +
         `**States** ${r.states.map((s) => STATE_LABEL[s]).join(', ')} · ` +
         `**Renders on** ${HOST_NOTE[r.host]}\n\n` +
+        (EFFECT_DESCRIPTIONS[r.name] ? `${EFFECT_DESCRIPTIONS[r.name]}\n\n` : '') +
         `Parameters (all optional, shown with defaults):\n\n` +
         r.props.map((p) => `- ${p}`).join('\n') +
         '\n'
@@ -88,7 +121,7 @@ An unknown name logs a warning and renders nothing, rather than throwing.
 
 ${section('Outline effects', 'These set `staticBorderAnimVar`, `hoverBorderAnimVar` or `activeBorderAnimVar`. They draw on the button edge and may extend outside it — each is given `borderOverflow` px of room (default 40).', byLayer.border)}
 
-${section('Interior effects', 'These set `staticOverlayAnimVar`, `hoverOverlayAnimVar` or `activeOverlayAnimVar`. They draw inside the silhouette and are clipped to it; effects that look better bleeding set \`clip: false\` and need \`staticBorderAnimVar\`-style room only if you move them to the border layer.', byLayer.overlay)}
+${section('Interior effects', 'These set `staticOverlayAnimVar`, `hoverOverlayAnimVar` or `activeOverlayAnimVar`. They draw inside the silhouette and are clipped to it; effects that look better bleeding set `clip: false` and need `staticBorderAnimVar`-style room only if you move them to the border layer.', byLayer.overlay)}
 
 ${section('Cursor-driven effects', 'These only answer to the hover and active props — at rest there is no cursor to respond to. They receive the pointer position in button-box pixels.', byLayer.hover)}
 

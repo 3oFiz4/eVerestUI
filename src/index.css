@@ -1,2 +1,15 @@
 @import "tailwindcss";
 
+@layer base {
+  html,
+  body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+.jetbrains-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+

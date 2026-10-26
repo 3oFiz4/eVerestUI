@@ -63,9 +63,19 @@ export class AnimationBase {
     }, this.layer)
     if (this.constructor.host === 'canvas') {
       this._tick = (time) => {
-        if (!this.mounted || !this.active || !this.playing) return
+        if (!this.mounted || !this.playing) return
+        const busy = this.isBusy?.()
+        if (!this.active && !busy) return
         this.clearFrame()
         this.render(time, gsap.ticker.deltaRatio(60))
+        if (!this.active && !this.isBusy?.() && !this.constructor.ballistic) {
+          gsap.to(this.root, {
+            opacity: 0,
+            duration: this.opts.fade ?? 0.25,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          })
+        }
       }
       gsap.ticker.add(this._tick)
     }
@@ -102,7 +112,7 @@ export class AnimationBase {
       div.appendChild(box)
       this.mountEl = box
     }
-    gsap.set(this.root, { opacity: 0, force3D: true, pointerEvents: 'none' })
+    gsap.set(this.root, { opacity: this.constructor.ballistic ? 1 : 0, force3D: true, pointerEvents: 'none' })
     this.layer.appendChild(this.root)
   }
 
@@ -139,27 +149,29 @@ export class AnimationBase {
     this.onResize()
   }
 
-  /** Clear the whole padded frame, in button-box coordinates. */
+  /** Clear the whole canvas bitmap, covering all DPR and subpixel edge bounds. */
   clearFrame() {
-    if (!this.ctx2d) return
-    this.ctx2d.clearRect(
-      -this.inset,
-      -this.inset,
-      this.size.w + this.inset * 2,
-      this.size.h + this.inset * 2
-    )
+    if (!this.ctx2d || !this.root) return
+    this.ctx2d.save()
+    this.ctx2d.setTransform(1, 0, 0, 1, 0, 0)
+    this.ctx2d.clearRect(0, 0, this.root.width, this.root.height)
+    this.ctx2d.restore()
   }
 
   setActive(active) {
     if (this.active === active) return
     this.active = active
     if (!this.mounted) return
-    gsap.to(this.root, {
-      opacity: active ? 1 : 0,
-      duration: this.opts.fade ?? 0.25,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    })
+    if (!this.constructor.ballistic) {
+      if (active || !this.isBusy?.()) {
+        gsap.to(this.root, {
+          opacity: active ? 1 : 0,
+          duration: this.opts.fade ?? 0.25,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        })
+      }
+    }
     this.onActive(active)
   }
 
@@ -188,6 +200,9 @@ export class AnimationBase {
   onResize() {}
   onActive() {}
   onPointer() {}
+  isBusy() {
+    return false
+  }
 }
 
 export default AnimationBase

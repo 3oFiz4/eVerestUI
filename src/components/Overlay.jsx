@@ -1,7 +1,18 @@
-import { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useHost } from './context.js'
 import { createEngine } from './overlay/engine.js'
 import { resolveEffects } from './overlay/registry.js'
+
+function getHostElement(box) {
+  if (!box) return null
+  const btn = box.closest('button')
+  if (btn) return btn
+  let el = box.parentElement
+  while (el && el !== document.body && window.getComputedStyle(el).display === 'inline') {
+    el = el.parentElement
+  }
+  return el || box.parentElement
+}
 
 /**
  * Animation host for any component. Drop it inside a `relative` parent and it
@@ -42,16 +53,75 @@ export function Overlay({
   followPointer = true,
   ref,
 }) {
-  const host = useHost()
+  const hostContext = useHost()
   const boxRef = useRef(null)
   const borderRef = useRef(null)
   const innerRef = useRef(null)
   const enginesRef = useRef(null)
   const stateRef = useRef({ hover: false, active: false })
+  const [parentRadius, setParentRadius] = useState(0)
 
-  // Geometry and accent fall back to the host component (e.g. Button variant).
-  const resolvedRadius = radius ?? host.radius ?? 0
-  const resolvedAccent = accent ?? host.accent
+  // Geometry and accent fall back to the host component (e.g. Button variant) or parent element.
+  const resolvedRadius = radius ?? hostContext.radius ?? parentRadius
+  const resolvedAccent = accent ?? hostContext.accent
+
+  /**
+   * Always match the exact size and shape of the parent element (Button, Card, or any div).
+   * 1. If the parent lacks positioning, ensure it has `position: relative`.
+   * 2. Overcome CSS padding-box constraint on absolute positioning by offsetting
+   *    by negative border-width and sizing to host's outer border-box.
+   * 3. Observe host size dynamically with ResizeObserver.
+   */
+  useLayoutEffect(() => {
+    const box = boxRef.current
+    const host = getHostElement(box)
+    if (!box || !host) return
+
+    // If box was nested inside an inline wrapper within the host, ensure the wrapper doesn't trap positioning
+    if (box.parentElement && box.parentElement !== host) {
+      box.parentElement.style.position = 'static'
+    }
+
+    const computed = window.getComputedStyle(host)
+    if (computed.position === 'static') {
+      host.style.position = 'relative'
+    }
+
+    const syncSize = () => {
+      if (!box || !host) return
+      const cs = window.getComputedStyle(host)
+      const bt = parseFloat(cs.borderTopWidth) || 0
+      const bl = parseFloat(cs.borderLeftWidth) || 0
+
+      // Match the full outer border-box of the parent element
+      const w = host.offsetWidth || Math.round(host.getBoundingClientRect().width)
+      const h = host.offsetHeight || Math.round(host.getBoundingClientRect().height)
+
+      box.style.top = `${-bt}px`
+      box.style.left = `${-bl}px`
+      box.style.width = `${w}px`
+      box.style.height = `${h}px`
+
+      if (radius == null && hostContext.radius == null) {
+        const br = parseFloat(cs.borderRadius) || 0
+        setParentRadius(br)
+      }
+
+      enginesRef.current?.borderEngine.resize()
+      enginesRef.current?.innerEngine.resize()
+    }
+
+    syncSize()
+
+    const ro = new ResizeObserver(syncSize)
+    ro.observe(host)
+    window.addEventListener('resize', syncSize)
+
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', syncSize)
+    }
+  }, [radius, hostContext.radius])
 
   const effects = useMemo(
     () =>
@@ -140,7 +210,7 @@ export function Overlay({
    */
   useEffect(() => {
     const box = boxRef.current
-    const host = box?.parentElement
+    const host = getHostElement(box)
     if (!box || !host) return
 
     const onMove = (event) => {
@@ -165,7 +235,8 @@ export function Overlay({
       sendState(stateRef.current)
       sendPointer({ x: 0.5, y: 0.5, px: 0, py: 0, inside: false })
     }
-    const onDown = () => {
+    const onDown = (event) => {
+      onMove(event)
       stateRef.current = { ...stateRef.current, active: true }
       sendState(stateRef.current)
     }
@@ -193,7 +264,7 @@ export function Overlay({
   useImperativeHandle(ref, () => ({ setState: sendState, setPointer: sendPointer }), [sendPointer, sendState])
 
   return (
-    <div ref={boxRef} className={`pointer-events-none absolute inset-0 -z-10 ${className}`} aria-hidden="true">
+    <div ref={boxRef} className={`pointer-events-none absolute inset-0 z-0 ${className}`} aria-hidden="true">
       <div
         ref={borderRef}
         className="absolute"

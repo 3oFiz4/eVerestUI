@@ -24,8 +24,9 @@ dist-ssr
 *.sw?
 
 # Task notes
-todo.md
-**/todo.md
+todo*.md
+**/todo*.md
 
 # Local dev notes (not published)
 README_DEV.md
+src/components/ui_ref/
