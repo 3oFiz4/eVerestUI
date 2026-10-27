@@ -5,8 +5,12 @@
   body {
     background-color: #000000;
     color: #ffffff;
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   }
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
 }
 
 .jetbrains-mono {
