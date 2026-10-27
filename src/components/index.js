@@ -1,4 +1,5 @@
 export { Overlay } from './Overlay'
 export { Button, BUTTON_SIZES, BUTTON_VARIANTS, variantAccent } from './Button'
 export { Card } from './Card'
+export { Sidebar } from './Sidebar'
 export { EFFECT_NAMES } from './overlay/registry'

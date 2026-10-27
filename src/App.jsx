@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   Overlay,
+  Sidebar,
   BUTTON_SIZES,
   BUTTON_VARIANTS,
 } from "./components";
@@ -123,7 +124,9 @@ export default function App() {
 
   return (
     <main className="min-h-screen w-full bg-black px-6 py-10 text-white font-mono jetbrains-mono">
-      <div className="mx-auto max-w-5xl space-y-10">
+      <div className="mx-auto flex max-w-6xl gap-10">
+        <Sidebar />
+        <div className="min-w-0 flex-1 space-y-10">
         <header className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight text-white">
             Button & Overlay System
@@ -646,6 +649,7 @@ export default function App() {
             </Card>
           </Row>
         </Section>
+        </div>
       </div>
     </main>
   );
