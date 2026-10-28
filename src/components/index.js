@@ -6,7 +6,7 @@ export {
   BUTTON_GROUP_ORIENTATIONS,
   BUTTON_GROUP_VARIANTS,
 } from './ButtonGroup'
-export { Input, INPUT_VARIANTS } from './Input'
+export { Input, INPUT_SIZES, INPUT_VARIANTS } from './Input'
 export { Card } from './Card'
 export { Sidebar } from './Sidebar'
 export { EFFECT_NAMES } from './overlay/registry'
