@@ -14,6 +14,18 @@ function getHostElement(box) {
   return el || box.parentElement
 }
 
+function isChromatic(cssColor) {
+  if (!cssColor || cssColor === 'transparent' || cssColor === 'rgba(0, 0, 0, 0)') return false
+  const m = cssColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+  if (m) {
+    const [, r, g, b] = m.map(Number)
+    return Math.max(r, g, b) - Math.min(r, g, b) > 10
+  }
+  const ok = cssColor.match(/oklch\([\d.]+\s+([\d.]+)/)
+  if (ok) return parseFloat(ok[1]) > 0.01
+  return false
+}
+
 /**
  * Animation host for any component. Drop it inside a `relative` parent and it
  * layers effects behind and around the content.
@@ -60,10 +72,13 @@ export function Overlay({
   const enginesRef = useRef(null)
   const stateRef = useRef({ hover: false, active: false })
   const [parentRadius, setParentRadius] = useState(0)
+  const [detectedColor, setDetectedColor] = useState(undefined)
 
   // Geometry and accent fall back to the host component (e.g. Button variant) or parent element.
   const resolvedRadius = radius ?? hostContext.radius ?? parentRadius
-  const resolvedAccent = accent ?? hostContext.accent
+  const resolvedAccent = accent ?? hostContext.customColor ?? detectedColor ?? hostContext.accent
+  const resolvedRippleColor =
+    accent ?? hostContext.customColor ?? detectedColor ?? hostContext.rippleColor ?? resolvedAccent
 
   /**
    * Always match the exact size and shape of the parent element (Button, Card, or any div).
@@ -107,6 +122,11 @@ export function Overlay({
         setParentRadius(br)
       }
 
+      if (!accent && !hostContext.customColor) {
+        const chrom = [cs.color, cs.borderTopColor, cs.backgroundColor].find(isChromatic)
+        setDetectedColor(chrom)
+      }
+
       enginesRef.current?.borderEngine?.resize?.()
       enginesRef.current?.innerEngine?.resize?.()
     }
@@ -121,7 +141,7 @@ export function Overlay({
       ro.disconnect()
       window.removeEventListener('resize', syncSize)
     }
-  }, [radius, hostContext.radius])
+  }, [radius, hostContext.radius, accent, hostContext.customColor])
 
   const effects = useMemo(
     () =>
@@ -163,14 +183,20 @@ export function Overlay({
     const inner = innerRef.current
     if (!border || !inner) return
 
-    const withHost = effects.map((e) => ({
-      ...e,
-      modify: {
-        radius: resolvedRadius,
-        ...(resolvedAccent ? { color: resolvedAccent } : {}),
-        ...e.modify,
-      },
-    }))
+    const withHost = effects.map((e) => {
+      const defaultColor =
+        e.layer === 'overlay' && e.state === 'active'
+          ? (resolvedRippleColor ?? resolvedAccent)
+          : resolvedAccent
+      return {
+        ...e,
+        modify: {
+          radius: resolvedRadius,
+          ...(defaultColor ? { color: defaultColor } : {}),
+          ...e.modify,
+        },
+      }
+    })
     const borderEngine = createEngine(
       border,
       withHost.filter((e) => e.layer === 'border'),
@@ -190,7 +216,7 @@ export function Overlay({
       innerEngine.destroy()
       enginesRef.current = null
     }
-  }, [effects, resolvedRadius, resolvedAccent, borderOverflow])
+  }, [effects, resolvedRadius, resolvedAccent, resolvedRippleColor, borderOverflow])
 
   const sendState = useCallback((next) => {
     enginesRef.current?.borderEngine.setState(next)

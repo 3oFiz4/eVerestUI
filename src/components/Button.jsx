@@ -1,5 +1,6 @@
 import { Children, cloneElement, isValidElement } from 'react'
 import { HostProvider } from './context.js'
+import { Overlay } from './Overlay.jsx'
 
 /**
  * Sharp-cornered, monochrome button. Radius is 0 by default and only rises when asked.
@@ -31,10 +32,12 @@ import { HostProvider } from './context.js'
 const VARIANTS = {
   default: {
     accent: '#ffffff',
+    ripple: '#000000',
     base: 'bg-white text-black border border-white hover:bg-white/90 active:bg-white/80',
   },
   primary: {
     accent: '#ffffff',
+    ripple: '#000000',
     base: 'bg-white text-black border border-white hover:bg-white/90 active:bg-white/80',
   },
   outline: {
@@ -150,11 +153,14 @@ export function Button({
   size = 'default',
   fontSize,
   radius = 0,
+  color,
+  ripple = true,
   disabled = false,
   loading = false,
   fullWidth = false,
   icon,
   iconPosition = 'inline-start',
+  style,
   ...props
 }) {
   const v = VARIANTS[variant] ?? VARIANTS.default
@@ -162,7 +168,10 @@ export function Button({
   const s = SIZES[resolvedSize] ?? SIZES.default
   const isTiny = resolvedSize === 'xs' || resolvedSize === 'icon-xs'
   const isSmall = resolvedSize === 'sm' || resolvedSize === 'icon-sm'
-  const host = { radius, accent: v.accent, disabled: disabled || loading }
+  const customColor = color || style?.color || style?.borderColor || style?.backgroundColor
+  const accent = customColor || v.accent
+  const rippleColor = customColor || v.ripple || v.accent
+  const host = { radius, accent, rippleColor, customColor, disabled: disabled || loading }
 
   let startIcon = null
   let endIcon = null
@@ -195,6 +204,7 @@ export function Button({
         child.props?.hoverOverlayAnimVar !== undefined ||
         child.props?.activeOverlayAnimVar !== undefined ||
         child.props?.borderOverflow !== undefined ||
+        child.type === Overlay ||
         child.type?.name === 'Overlay' ||
         child.type?.displayName === 'Overlay')
     ) {
@@ -204,6 +214,26 @@ export function Button({
     }
   })
 
+  if (ripple) {
+    if (overlays.length === 0) {
+      overlays.push(
+        <Overlay
+          key="__default-ripple"
+          activeOverlayAnimVar="ripple"
+          activeOverlayAnimVarModify={{ auto: false }}
+        />
+      )
+    } else if (overlays.every((c) => c.props?.activeOverlayAnimVar === undefined)) {
+      overlays[0] = cloneElement(overlays[0], {
+        activeOverlayAnimVar: 'ripple',
+        activeOverlayAnimVarModify: {
+          auto: false,
+          ...overlays[0].props?.activeOverlayAnimVarModify,
+        },
+      })
+    }
+  }
+
   return (
     <HostProvider value={host}>
       <button
@@ -211,7 +241,11 @@ export function Button({
         data-slot="button"
         disabled={disabled || loading}
         aria-busy={loading || undefined}
-        style={{ borderRadius: radius }}
+        style={{
+          borderRadius: radius,
+          ...(color ? { color, borderColor: color } : {}),
+          ...style,
+        }}
         className={`group/button font-montserrat font-bold font-[700] relative isolate inline-flex shrink-0 cursor-pointer items-center justify-center tracking-tight whitespace-nowrap select-none leading-none outline-none
           transition-all duration-150 ease-out
           focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black

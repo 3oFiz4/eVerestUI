@@ -5,7 +5,13 @@ import { createContext, useContext } from 'react'
  * `<Button variant="danger"><Overlay .../></Button>` needs no radius prop and
  * no colour plumbing.
  */
-export const HostContext = createContext({ radius: 0, accent: undefined, disabled: false })
+export const HostContext = createContext({
+  radius: 0,
+  accent: undefined,
+  rippleColor: undefined,
+  customColor: undefined,
+  disabled: false,
+})
 
 export const useHost = () => useContext(HostContext)
 
