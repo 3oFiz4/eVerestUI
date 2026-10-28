@@ -1,5 +1,3 @@
-import { Overlay } from './Overlay.jsx'
-
 /**
  * Sharp-cornered, monochrome Input component matching Button's exact size scale.
  *
@@ -11,8 +9,7 @@ import { Overlay } from './Overlay.jsx'
  *   - xl:          h-8 (32px), px-2.5 text-[12px] text-xs
  *   - 2xl:         h-9 (36px), px-3   text-sm
  *
- * Every input mounts a subtle 5% opacity micro `outer-grid` Overlay inside its field
- * by default (`gridOverlay = true`) and supports 12 animation variants:
+ * Supports 12 variants:
  *   - `simple`          - Clean 1px monochrome input, no focus animation
  *   - `floating-label`  - Floating inset label (docks on top border & reveals placeholder on focus)
  *   - `crosshair`       - Corner reticle brackets snapping outward on focus
@@ -88,7 +85,6 @@ export function Input({
   fullWidth = false,
   label,
   placeholder,
-  gridOverlay = true,
   disabled = false,
   type = 'text',
   style,
@@ -98,14 +94,6 @@ export function Input({
   const resolvedSize = resolveInputSize({ size, fontSize, className })
   const s = SIZES[resolvedSize] ?? SIZES.default
   const widthClass = fullWidth ? 'w-full' : 'w-48'
-
-  const gridNode = gridOverlay ? (
-    <Overlay
-      radius={radius}
-      staticOverlayAnimVar="outer-grid"
-      staticOverlayAnimVarModify={{ opacity: 0.05, cell: 8, arm: 2.5 }}
-    />
-  ) : null
 
   const baseInput = `peer relative z-10 w-full bg-transparent font-mono text-white placeholder:text-white/35 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40 ${s} ${className}`
 
@@ -121,7 +109,6 @@ export function Input({
           disabled ? 'opacity-40 cursor-not-allowed' : ''
         } ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -145,7 +132,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -182,7 +168,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex flex-col bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -206,7 +191,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center overflow-hidden border border-white/30 bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -230,7 +214,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center border border-white/25 bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -254,7 +237,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center border border-white/15 bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -290,7 +272,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center overflow-hidden border border-white/25 bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -322,7 +303,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center border border-white/20 bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -350,7 +330,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center border border-white/20 bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -386,7 +365,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}
@@ -412,7 +390,6 @@ export function Input({
         style={{ borderRadius: radius, ...style }}
         className={`relative inline-flex items-center overflow-hidden border border-white/30 bg-black ${widthClass} ${containerClassName}`}
       >
-        {gridNode}
         <input
           type={type}
           disabled={disabled}

@@ -847,16 +847,14 @@ export default function App() {
                   <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
                     {"<Button />"}
                   </code>
-                  {`. Every input mounts a 5% opacity micro `}
-                  <code className="text-white">outer-grid</code>
-                  {` Overlay inside the field by default and supports 12 focus animation variants.`}
+                  {`. Supports 12 focus variants.`}
                 </p>
               </header>
 
               <Section
                 id="variants"
-                title="Input Styles & Animation Variants"
-                note="Click or focus into any input field to preview its focus animation. All inputs include the 5% micro outer-grid overlay."
+                title="Input Styles & Variants"
+                note="Click or focus into any input field to preview its focus state."
               >
                 <Row label="simple (00)">
                   <Input variant="simple" placeholder="simple" />
@@ -1012,11 +1010,6 @@ export default function App() {
                           "placeholder",
                           "string",
                           "shown on focus for 'floating-label', or at rest for other variants",
-                        ],
-                        [
-                          "gridOverlay",
-                          "boolean",
-                          "true — mounts the 5% opacity micro outer-grid Overlay",
                         ],
                         ["disabled", "boolean", ""],
                         ["fullWidth", "boolean", ""],
