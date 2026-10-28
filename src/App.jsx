@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LuArrowRight,
   LuDownload,
@@ -126,15 +126,18 @@ const EFFECT_NAMES = [
 
 /* --------------------------------------------------------------------- app */
 
+function resolveHashComponent() {
+  if (typeof window === "undefined") return "Button";
+  const h = window.location.hash.toLowerCase();
+  if (h === "#overlay") return "Overlay";
+  if (h === "#button-group" || h === "#buttongroup") return "Button Group";
+  if (h === "#input") return "Input";
+  if (h === "#all") return "All";
+  return "Button";
+}
+
 export default function App() {
-  const [activeComponent, setActiveComponent] = useState(() => {
-    if (typeof window === "undefined") return "Button";
-    const h = window.location.hash.toLowerCase();
-    if (h === "#overlay") return "Overlay";
-    if (h === "#button-group") return "Button Group";
-    if (h === "#input") return "Input";
-    return "Button";
-  });
+  const [activeComponent, setActiveComponent] = useState(resolveHashComponent);
   const [combo, setCombo] = useState({
     border: "snake",
     inner: "halftone",
@@ -145,22 +148,51 @@ export default function App() {
   // Read the live effect list straight off the registry so the docs cannot drift.
   const names = [...new Set(EFFECT_NAMES)];
 
+  useEffect(() => {
+    const onHash = () => setActiveComponent(resolveHashComponent());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
   const handleSelectComponent = (item) => {
     setActiveComponent(item);
-    window.history.replaceState(
-      null,
-      "",
-      `#${item.toLowerCase().replace(/\s+/g, "-")}`,
-    );
+    window.location.hash = `#${item.toLowerCase().replace(/\s+/g, "-")}`;
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const showButton = activeComponent === "Button" || activeComponent === "All";
+  const showButtonGroup =
+    activeComponent === "Button Group" || activeComponent === "All";
+  const showInput = activeComponent === "Input" || activeComponent === "All";
+  const showOverlay =
+    activeComponent === "Overlay" || activeComponent === "All";
 
   return (
     <main className="min-h-screen w-full bg-black px-6 py-10 text-white font-montserrat">
       <div className="mx-auto flex max-w-6xl gap-10">
         <Sidebar active={activeComponent} onSelect={handleSelectComponent} />
         <div className="min-w-0 flex-1 space-y-10">
-          {activeComponent === "Button" ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/15 pb-4">
+            <span className="font-mono text-xs text-white/60">
+              eVerestUI / Components
+            </span>
+            <ButtonGroup variant="monolithic">
+              {["Button", "Button Group", "Input", "Overlay", "All"].map(
+                (item) => (
+                  <Button
+                    key={item}
+                    size="sm"
+                    variant={activeComponent === item ? "default" : "outline"}
+                    onClick={() => handleSelectComponent(item)}
+                  >
+                    {item}
+                  </Button>
+                ),
+              )}
+            </ButtonGroup>
+          </div>
+
+          {showButton && (
             <>
               <header className="space-y-3">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
@@ -493,7 +525,9 @@ export default function App() {
                 </div>
               </Section>
             </>
-          ) : activeComponent === "Button Group" ? (
+          )}
+
+          {showButtonGroup && (
             <>
               <header className="space-y-3">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
@@ -836,7 +870,9 @@ export default function App() {
                 </div>
               </Section>
             </>
-          ) : activeComponent === "Input" ? (
+          )}
+
+          {showInput && (
             <>
               <header className="space-y-3">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
@@ -1025,7 +1061,9 @@ export default function App() {
                 </div>
               </Section>
             </>
-          ) : (
+          )}
+
+          {showOverlay && (
             <>
               <header className="space-y-3">
                 <h1 className="text-3xl font-bold tracking-tight text-white">

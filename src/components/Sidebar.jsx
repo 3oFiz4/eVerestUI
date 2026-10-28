@@ -6,7 +6,7 @@ import { ACTIVE, LIVE_COMPONENTS, NAV_GROUPS } from "../docs/nav";
  */
 export function Sidebar({ active = ACTIVE, onSelect }) {
   return (
-    <nav className="sticky top-10 hidden h-[calc(100vh-5rem)] w-56 shrink-0 overflow-y-auto border-r border-white/10 pr-4 lg:block">
+    <nav className="sticky top-10 hidden h-[calc(100vh-5rem)] w-56 shrink-0 overflow-y-auto border-r border-white/10 pr-4 md:block">
       {NAV_GROUPS.map((group) => (
         <div key={group.title} className="mb-6">
           <h3 className="mb-2 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
