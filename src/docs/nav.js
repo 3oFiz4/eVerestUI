@@ -1,9 +1,9 @@
 /**
  * Sidebar inventory mirrored from ui.shadcn.com/docs/components.
- * eVerestUI ships Button, Button Group, and Overlay; every other label renders disabled.
+ * eVerestUI ships Button, Button Group, Input, and Overlay; every other label renders disabled.
  */
 export const ACTIVE = "Button";
-export const LIVE_COMPONENTS = ["Button", "Button Group", "Overlay"];
+export const LIVE_COMPONENTS = ["Button", "Button Group", "Input", "Overlay"];
 
 export const NAV_GROUPS = [
   {

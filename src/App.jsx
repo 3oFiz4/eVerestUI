@@ -12,12 +12,14 @@ import {
   ButtonGroup,
   ButtonGroupSeparator,
   Card,
+  Input,
   Overlay,
   Sidebar,
   BUTTON_SIZES,
   BUTTON_VARIANTS,
   BUTTON_GROUP_ORIENTATIONS,
   BUTTON_GROUP_VARIANTS,
+  INPUT_VARIANTS,
 } from "./components";
 
 /* ------------------------------------------------------------------ layout */
@@ -129,6 +131,7 @@ export default function App() {
     const h = window.location.hash.toLowerCase();
     if (h === "#overlay") return "Overlay";
     if (h === "#button-group") return "Button Group";
+    if (h === "#input") return "Input";
     return "Button";
   });
   const [combo, setCombo] = useState({
@@ -749,10 +752,10 @@ export default function App() {
               >
                 <Row label="input + button">
                   <ButtonGroup>
-                    <input
-                      type="text"
+                    <Input
                       placeholder="git clone https://..."
-                      className="h-6 border border-white/20 bg-black px-2.5 font-mono text-xs text-white placeholder:text-white/40 focus:border-white focus:outline-none"
+                      containerClassName="w-64"
+                      className="h-6"
                     />
                     <Button variant="default">Clone</Button>
                   </ButtonGroup>
@@ -823,6 +826,275 @@ export default function App() {
                           "ButtonGroupSeparator.orientation",
                           "'vertical' | 'horizontal'",
                           "auto-adapts to parent ButtonGroup orientation by default",
+                        ],
+                      ].map(([p, t, n]) => (
+                        <tr key={p} className="border-b border-white/10">
+                          <td className="py-2 pr-4">{p}</td>
+                          <td className="py-2 pr-4 text-white/60">{t}</td>
+                          <td className="py-2 font-sans text-white/60">{n}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Section>
+            </>
+          ) : activeComponent === "Input" ? (
+            <>
+              <header className="space-y-3">
+                <h1 className="text-3xl font-bold tracking-tight text-white">
+                  Input
+                </h1>
+                <p className="max-w-3xl text-sm text-white/70 leading-relaxed">
+                  {`Monochrome text input accepting all native HTML `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<input />"}
+                  </code>
+                  {` attributes. Every input mounts a subtle 5% opacity micro `}
+                  <code className="text-white">outer-grid</code>
+                  {` Overlay inside the field by default and ships with 12 hardware-accelerated architectural focus animations.`}
+                </p>
+              </header>
+
+              <Section
+                id="core-inputs"
+                title="Core Input Variations (00 – 05)"
+                note="Click or focus into each field to trigger its kinetic focus state. Every field includes the 5% micro outer-grid overlay."
+              >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>00 // SIMPLE INPUT</span>
+                      <span>STATIC 1PX + 5% OUTER-GRID</span>
+                    </div>
+                    <Input
+                      variant="simple"
+                      placeholder="STANDARD_FIELD_VALUE..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Zero kinetic ornamentation; pure 1px border & micro outer-grid
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>01 // FLOATING INSET MATRIX LABEL</span>
+                      <span>ACTIVE PLACEHOLDER REVEAL</span>
+                    </div>
+                    <Input
+                      variant="floating-label"
+                      label="[01] ENDPOINT_URI"
+                      placeholder="wss://telemetry.everest.ui/stream"
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Label docks on top border; reveals placeholder on focus while empty
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>02 // ACTIVE CROSSHAIR</span>
+                      <span>CORNER RETICLE BRACKETS</span>
+                    </div>
+                    <Input
+                      variant="crosshair"
+                      placeholder="TARGET_COORDINATES..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Corner 2px reticles snap outward & illuminate on focus
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>03 // UNDERLINE BEAM</span>
+                      <span>CENTER-OUTWARD 2PX RAIL</span>
+                    </div>
+                    <Input
+                      variant="underline-beam"
+                      placeholder="ENTER_COMMAND_QUERY..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      2px beam expands from center to 100% width on focus
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>04 // INVERTED FILL SHUTTER</span>
+                      <span>MECHANICAL SOLID WIPE</span>
+                    </div>
+                    <Input variant="shutter" placeholder="TYPE_HERE..." />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      scaleX(1) white shutter wipe with synchronous text inversion
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>05 // GHOST NOTCH INSET</span>
+                      <span>INTERNAL 3PX FRAME RECESSION</span>
+                    </div>
+                    <Input variant="ghost-notch" placeholder="TYPE_HERE..." />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Internal border frame contracts from 0px to 3px on focus
+                    </div>
+                  </div>
+                </div>
+              </Section>
+
+              <Section
+                id="extended-inputs"
+                title="Extended Architectural Animations (06 – 11)"
+                note="Six additional GPU-composited focus animations built exclusively with transform and opacity."
+              >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>06 // PERIMETER TRACE</span>
+                      <span>4-EDGE SEQUENTIAL LASER</span>
+                    </div>
+                    <Input
+                      variant="perimeter-trace"
+                      placeholder="AUTH_BEARER_TOKEN..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Staggered scaleX/scaleY 1px beams lock all four edges clockwise
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>07 // SCANLINE SWEEP</span>
+                      <span>CRT MATRIX + RADAR PASS</span>
+                    </div>
+                    <Input
+                      variant="scanline-sweep"
+                      placeholder="SCAN_HOST_SIGNATURE..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Horizontal scanline grating + sweeping vertical radar beam
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>08 // PILLAR CLAMP</span>
+                      <span>DUAL 4PX VERTICAL RAILS</span>
+                    </div>
+                    <Input
+                      variant="pillar-clamp"
+                      placeholder="LOCK_CHANNEL_ID..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Left and right solid white pillars expand from center on focus
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>09 // CHAMFER LOCK</span>
+                      <span>CORNER WEDGES + DATUM TICKS</span>
+                    </div>
+                    <Input
+                      variant="chamfer-lock"
+                      placeholder="VECTOR_SEED_HASH..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Diagonal corner wedges and center datum ticks snap into place
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>10 // SONAR PULSE</span>
+                      <span>OUTER HALO + TELEMETRY BADGE</span>
+                    </div>
+                    <Input
+                      variant="sonar-pulse"
+                      placeholder="PING_TARGET_HOST..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Outer perimeter ring expands 4px outward &amp; illuminates ACT badge
+                    </div>
+                  </div>
+
+                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>11 // SPLIT SHUTTER</span>
+                      <span>BI-DIRECTIONAL DUAL WIPE</span>
+                    </div>
+                    <Input
+                      variant="split-shutter"
+                      placeholder="OVERRIDE_KEY..."
+                    />
+                    <div className="font-mono text-[10px] text-zinc-500">
+                      Top &amp; bottom half-shutters meet at center with text inversion
+                    </div>
+                  </div>
+                </div>
+              </Section>
+
+              <Section
+                id="input-examples"
+                title="Usage & Composition"
+                note="Combine Input with ButtonGroup or use any variant standalone."
+              >
+                <Code>{`<Input variant="simple" placeholder="Standard input..." />
+<Input
+  variant="floating-label"
+  label="[01] ENDPOINT_URI"
+  placeholder="wss://telemetry.everest.ui/stream"
+/>
+<Input variant="crosshair" placeholder="TARGET_COORDINATES..." />
+<Input variant="shutter" placeholder="TYPE_HERE..." />`}</Code>
+              </Section>
+
+              <Section
+                id="api"
+                title="Input Props"
+                note="Input forwards all standard HTML <input> attributes to the underlying input element."
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-left text-xs">
+                    <thead className="text-white/60">
+                      <tr className="border-b border-white/20">
+                        <th className="py-2 pr-4 font-normal">prop</th>
+                        <th className="py-2 pr-4 font-normal">type</th>
+                        <th className="py-2 font-normal">notes</th>
+                      </tr>
+                    </thead>
+                    <tbody className="font-mono text-white/90">
+                      {[
+                        [
+                          "variant",
+                          `'${INPUT_VARIANTS.join("' | '")}'`,
+                          "'simple'",
+                        ],
+                        [
+                          "label",
+                          "string",
+                          "inset floating label text for variant='floating-label'",
+                        ],
+                        [
+                          "placeholder",
+                          "string",
+                          "shown on focus for 'floating-label', or at rest for other variants",
+                        ],
+                        [
+                          "gridOverlay",
+                          "boolean",
+                          "true — mounts the 5% opacity micro outer-grid Overlay",
+                        ],
+                        [
+                          "containerClassName",
+                          "string",
+                          "classes applied to the outer field wrapper",
+                        ],
+                        [
+                          "className",
+                          "string",
+                          "classes applied to the native <input> element",
                         ],
                       ].map(([p, t, n]) => (
                         <tr key={p} className="border-b border-white/10">
