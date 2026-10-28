@@ -9,11 +9,15 @@ import {
 } from "react-icons/lu";
 import {
   Button,
+  ButtonGroup,
+  ButtonGroupSeparator,
   Card,
   Overlay,
   Sidebar,
   BUTTON_SIZES,
   BUTTON_VARIANTS,
+  BUTTON_GROUP_ORIENTATIONS,
+  BUTTON_GROUP_VARIANTS,
 } from "./components";
 
 /* ------------------------------------------------------------------ layout */
@@ -120,12 +124,13 @@ const EFFECT_NAMES = [
 /* --------------------------------------------------------------------- app */
 
 export default function App() {
-  const [activeComponent, setActiveComponent] = useState(() =>
-    typeof window !== "undefined" &&
-    window.location.hash.toLowerCase() === "#overlay"
-      ? "Overlay"
-      : "Button",
-  );
+  const [activeComponent, setActiveComponent] = useState(() => {
+    if (typeof window === "undefined") return "Button";
+    const h = window.location.hash.toLowerCase();
+    if (h === "#overlay") return "Overlay";
+    if (h === "#button-group") return "Button Group";
+    return "Button";
+  });
   const [combo, setCombo] = useState({
     border: "snake",
     inner: "halftone",
@@ -138,7 +143,11 @@ export default function App() {
 
   const handleSelectComponent = (item) => {
     setActiveComponent(item);
-    window.history.replaceState(null, "", `#${item.toLowerCase()}`);
+    window.history.replaceState(
+      null,
+      "",
+      `#${item.toLowerCase().replace(/\s+/g, "-")}`,
+    );
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -468,6 +477,302 @@ export default function App() {
                         ["loading", "boolean", "spinner + disables"],
                         ["disabled", "boolean", ""],
                         ["fullWidth", "boolean", ""],
+                      ].map(([p, t, n]) => (
+                        <tr key={p} className="border-b border-white/10">
+                          <td className="py-2 pr-4">{p}</td>
+                          <td className="py-2 pr-4 text-white/60">{t}</td>
+                          <td className="py-2 font-sans text-white/60">{n}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Section>
+            </>
+          ) : activeComponent === "Button Group" ? (
+            <>
+              <header className="space-y-3">
+                <h1 className="text-3xl font-bold tracking-tight text-white">
+                  Button Group
+                </h1>
+                <p className="max-w-3xl text-sm text-white/70 leading-relaxed">
+                  {`Structural container that binds related `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<Button />"}
+                  </code>
+                  {` controls, inputs, and sub-groups into a single unit. Supports both `}
+                  <strong className="text-white">Monolithic Segment</strong>
+                  {` (overlapping 1px borders via `}
+                  <code className="text-white">-ml-px</code>
+                  {` / `}
+                  <code className="text-white">-mt-px</code>
+                  {` with hover/focus z-index auto-elevation) and `}
+                  <strong className="text-white">Recessed Chassis</strong>
+                  {` (1px perimeter trench encapsulating flush micro-buttons).`}
+                </p>
+              </header>
+
+              <Section
+                id="chassis-architecture"
+                title="Monolithic Segment vs. Recessed Chassis"
+                note="Two architectural grouping modes tailored for bordered and borderless monochrome controls."
+              >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs leading-relaxed text-white/80 mb-4">
+                  <div className="border border-white/20 bg-black p-4 space-y-2">
+                    <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                      1. Monolithic Segment (variant=&quot;monolithic&quot;)
+                    </h3>
+                    <p>
+                      Adjacent borders overlap seamlessly via{" "}
+                      <code className="text-white">-ml-px</code> (horizontal) or{" "}
+                      <code className="text-white">-mt-px</code> (vertical) so
+                      shared dividers never double into 2px seams. Hovered and
+                      focused children auto-elevate (
+                      <code className="text-white">z-20</code>) so crisp 1px
+                      borders and overlays are never truncated.
+                    </p>
+                  </div>
+                  <div className="border border-white/20 bg-black p-4 space-y-2">
+                    <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                      2. Recessed Chassis (variant=&quot;recessed&quot;)
+                    </h3>
+                    <p>
+                      A recessed 1px perimeter trench (
+                      <code className="text-white">border-white/25 p-0.5</code>)
+                      encapsulates flush-mounted micro buttons with
+                      high-contrast active engagement — ideal for mode switchers
+                      and segmented toolbars.
+                    </p>
+                  </div>
+                </div>
+
+                <Row label="monolithic (default)">
+                  <ButtonGroup variant="monolithic">
+                    <Button variant="neutral"> Years </Button>
+                    <Button variant="neutral"> Months </Button>
+                    <Button variant="neutral"> Days </Button>
+                    <Button variant="neutral"> Hours </Button>
+                  </ButtonGroup>
+                  <ButtonGroup variant="monolithic">
+                    <Button variant="outline">Inspect</Button>
+                    <Button variant="outline">Console</Button>
+                    <Button variant="outline">Network</Button>
+                  </ButtonGroup>
+                </Row>
+
+                <Row label="recessed chassis">
+                  <ButtonGroup variant="recessed">
+                    <Button variant="default">Live</Button>
+                    <Button variant="ghost">Staging</Button>
+                    <Button variant="ghost">Local</Button>
+                  </ButtonGroup>
+                  <ButtonGroup variant="recessed">
+                    <Button variant="secondary">RAW</Button>
+                    <ButtonGroupSeparator />
+                    <Button variant="secondary">HEX</Button>
+                    <ButtonGroupSeparator />
+                    <Button variant="secondary">UTF-8</Button>
+                  </ButtonGroup>
+                </Row>
+              </Section>
+
+              <Section
+                id="orientation"
+                title="Orientation (horizontal & vertical)"
+                note="Set orientation='horizontal' (default) or orientation='vertical'."
+              >
+                <Row label="horizontal">
+                  <ButtonGroup orientation="horizontal">
+                    <Button variant="outline">
+                      <LuDownload data-icon="inline-start" />
+                      Pull
+                    </Button>
+                    <Button variant="outline">
+                      <LuGitFork data-icon="inline-start" />
+                      Branch
+                    </Button>
+                    <Button variant="outline">
+                      <LuSettings data-icon="inline-start" />
+                      Config
+                    </Button>
+                  </ButtonGroup>
+                </Row>
+
+                <Row label="vertical (monolithic)">
+                  <ButtonGroup orientation="vertical">
+                    <Button variant="outline">Top Layer</Button>
+                    <Button variant="outline">Middle Layer</Button>
+                    <Button variant="outline">Bottom Layer</Button>
+                  </ButtonGroup>
+                  <ButtonGroup orientation="vertical" variant="recessed">
+                    <Button variant="secondary">Node 01</Button>
+                    <ButtonGroupSeparator />
+                    <Button variant="secondary">Node 02</Button>
+                    <ButtonGroupSeparator />
+                    <Button variant="secondary">Node 03</Button>
+                  </ButtonGroup>
+                </Row>
+              </Section>
+
+              <Section
+                id="separator"
+                title="ButtonGroupSeparator"
+                note="Separates borderless buttons (secondary, ghost, or inside a recessed chassis). Buttons with visible 1px borders already overlap via -ml-px so a separator is unnecessary there."
+              >
+                <Row label="ghost + separator">
+                  <ButtonGroup className="border border-white/20">
+                    <Button variant="ghost">Cut</Button>
+                    <ButtonGroupSeparator />
+                    <Button variant="ghost">Copy</Button>
+                    <ButtonGroupSeparator />
+                    <Button variant="ghost">Paste</Button>
+                  </ButtonGroup>
+                </Row>
+                <Row label="split action button">
+                  <ButtonGroup>
+                    <Button variant="secondary" className="border border-white/20">
+                      Deploy Production
+                    </Button>
+                    <ButtonGroupSeparator />
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="border border-white/20"
+                      aria-label="More deploy options"
+                    >
+                      <LuArrowRight />
+                    </Button>
+                  </ButtonGroup>
+                </Row>
+              </Section>
+
+              <Section
+                id="nested"
+                title="Nested ButtonGroup"
+                note="When a ButtonGroup contains child ButtonGroups, the parent automatically acts purely as a layout cluster with gap spacing between the sub-groups."
+              >
+                <Row label="horizontal nested">
+                  <ButtonGroup>
+                    <ButtonGroup>
+                      <Button size="icon" variant="outline" aria-label="Add">
+                        <LuPlus />
+                      </Button>
+                    </ButtonGroup>
+                    <ButtonGroup>
+                      <Button variant="outline">Archive</Button>
+                      <Button variant="outline">Report</Button>
+                      <Button variant="outline">Snooze</Button>
+                    </ButtonGroup>
+                    <ButtonGroup>
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        aria-label="Delete"
+                      >
+                        <LuTrash2 />
+                      </Button>
+                    </ButtonGroup>
+                  </ButtonGroup>
+                </Row>
+
+                <Row label="vertical nested">
+                  <ButtonGroup orientation="vertical">
+                    <ButtonGroup>
+                      <Button variant="outline">1</Button>
+                      <Button variant="outline">2</Button>
+                      <Button variant="outline">3</Button>
+                    </ButtonGroup>
+                    <ButtonGroup>
+                      <Button variant="outline">4</Button>
+                      <Button variant="outline">5</Button>
+                      <Button variant="outline">6</Button>
+                    </ButtonGroup>
+                  </ButtonGroup>
+                </Row>
+              </Section>
+
+              <Section
+                id="composition"
+                title="Inputs & Overlay Composition"
+                note="ButtonGroup works seamlessly with native inputs, status variants, and Overlay effects (hover/focus auto-elevation keeps border effects crisp)."
+              >
+                <Row label="input + button">
+                  <ButtonGroup>
+                    <input
+                      type="text"
+                      placeholder="git clone https://..."
+                      className="h-6 border border-white/20 bg-black px-2.5 font-mono text-xs text-white placeholder:text-white/40 focus:border-white focus:outline-none"
+                    />
+                    <Button variant="default">Clone</Button>
+                  </ButtonGroup>
+                </Row>
+
+                <Row label="button group + overlay">
+                  <ButtonGroup>
+                    <Button variant="outline">
+                      Snake
+                      <Overlay staticBorderAnimVar="snake" />
+                    </Button>
+                    <Button variant="outline">
+                      Slide Mask
+                      <Overlay
+                        hoverOverlayAnimVar="slide"
+                        hoverOverlayAnimVarModify={{ from: "bottom" }}
+                      />
+                    </Button>
+                    <Button variant="destructive">
+                      Purge
+                      <Overlay hoverBorderAnimVar="corner-grid" />
+                    </Button>
+                  </ButtonGroup>
+                </Row>
+
+                <div className="mt-4 space-y-4">
+                  <Code>{`<ButtonGroup>
+  <ButtonGroup>
+    <Button variant="outline">Archive</Button>
+    <Button variant="outline">Report</Button>
+  </ButtonGroup>
+  <ButtonGroup variant="recessed">
+    <Button variant="ghost">RAW</Button>
+    <ButtonGroupSeparator />
+    <Button variant="ghost">HEX</Button>
+  </ButtonGroup>
+</ButtonGroup>`}</Code>
+                </div>
+              </Section>
+
+              <Section
+                id="api"
+                title="ButtonGroup & ButtonGroupSeparator Props"
+                note="Both components forward all standard div attributes."
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-left text-xs">
+                    <thead className="text-white/60">
+                      <tr className="border-b border-white/20">
+                        <th className="py-2 pr-4 font-normal">prop</th>
+                        <th className="py-2 pr-4 font-normal">type</th>
+                        <th className="py-2 font-normal">notes</th>
+                      </tr>
+                    </thead>
+                    <tbody className="font-mono text-white/90">
+                      {[
+                        [
+                          "orientation",
+                          `'${BUTTON_GROUP_ORIENTATIONS.join("' | '")}'`,
+                          "'horizontal' — stacks horizontally or vertically",
+                        ],
+                        [
+                          "variant",
+                          `'${BUTTON_GROUP_VARIANTS.join("' | '")}'`,
+                          "'monolithic' (-ml-px overlap) or 'recessed' (1px perimeter chassis)",
+                        ],
+                        [
+                          "ButtonGroupSeparator.orientation",
+                          "'vertical' | 'horizontal'",
+                          "auto-adapts to parent ButtonGroup orientation by default",
+                        ],
                       ].map(([p, t, n]) => (
                         <tr key={p} className="border-b border-white/10">
                           <td className="py-2 pr-4">{p}</td>

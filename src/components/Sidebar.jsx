@@ -20,7 +20,7 @@ export function Sidebar({ active = ACTIVE, onSelect }) {
                 <li key={item}>
                   {live ? (
                     <a
-                      href={`#${item.toLowerCase()}`}
+                      href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
                       onClick={(e) => {
                         if (onSelect) {
                           e.preventDefault();
