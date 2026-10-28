@@ -351,10 +351,57 @@ export default function App() {
 
               <Section
                 id="examples"
-                title="Button Examples"
-                note="Standard Button usage with variants, icons, and custom colors."
+                title="Button Examples & Mixing with Overlay"
+                note="Button and Overlay compose directly: drop <Overlay /> inside any <Button> to layer border, interior, hover, or click animations while inheriting the button's variant color and corner radius."
               >
-                <div className="space-y-4">
+                <Row label="button + overlay mix">
+                  <Button variant="outline">
+                    Snake + Halftone
+                    <Overlay
+                      staticBorderAnimVar="snake"
+                      staticBorderAnimVarModify={{ thickness: 2 }}
+                      staticOverlayAnimVar="halftone"
+                      staticOverlayAnimVarModify={{ grid: 6 }}
+                    />
+                  </Button>
+                  <Button variant="outline">
+                    Hover Slide Mask
+                    <Overlay
+                      hoverOverlayAnimVar="slide"
+                      hoverOverlayAnimVarModify={{ from: "bottom" }}
+                    />
+                  </Button>
+                  <Button variant="destructive">
+                    Danger Glow + Crack
+                    <Overlay
+                      staticBorderAnimVar="glow"
+                      hoverBorderAnimVar="corner-grid"
+                      activeOverlayAnimVar="hyper-triangle-crack"
+                    />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => handleSelectComponent("Overlay")}
+                  >
+                    Explore All Overlay Effects
+                    <LuArrowRight data-icon="inline-end" />
+                  </Button>
+                </Row>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <p className="mb-2 text-xs text-white/60">
+                      Mixing Button with Overlay animations
+                    </p>
+                    <Code>{`<Button variant="outline">
+  Snake + Halftone
+  <Overlay
+    staticBorderAnimVar="snake"
+    staticOverlayAnimVar="halftone"
+    hoverOverlayAnimVar="slide"
+    hoverOverlayAnimVarModify={{ from: 'bottom' }}
+  />
+</Button>`}</Code>
+                  </div>
                   <div>
                     <p className="mb-2 text-xs text-white/60">
                       Destructive button (red ripple by default) and custom
