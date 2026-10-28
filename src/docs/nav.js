@@ -1,8 +1,9 @@
 /**
  * Sidebar inventory mirrored from ui.shadcn.com/docs/components.
- * eVerestUI ships Button only; every other label renders disabled.
+ * eVerestUI ships Button and Overlay; every other label renders disabled.
  */
 export const ACTIVE = "Button";
+export const LIVE_COMPONENTS = ["Button", "Overlay"];
 
 export const NAV_GROUPS = [
   {
@@ -54,6 +55,7 @@ export const NAV_GROUPS = [
       "Message Scroller",
       "Native Select",
       "Navigation Menu",
+      "Overlay",
       "Pagination",
       "Popover",
       "Progress",
