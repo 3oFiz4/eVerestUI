@@ -278,6 +278,19 @@ Parameters (all optional, shown with defaults):
 - `clip`: boolean = true
 - `radius`: number = 0
 
+### `outer-grid`
+
+**Where** inner layer · **States** `static*`, `hover*`, `active*` · **Renders on** canvas — rasterised per frame
+
+Parameters (all optional, shown with defaults):
+
+- `color`: string = "#ffffff"
+- `opacity`: number = 0.45
+- `cell`: number = 20
+- `arm`: number = 6
+- `radius`: number = 0
+- `reach`: number = 0.85
+
 
 ## Cursor-driven effects
 
@@ -353,19 +366,6 @@ Parameters (all optional, shown with defaults):
 - `gap`: number = 0
 - `clip`: boolean = true
 - `radius`: number = 0
-
-### `outer-grid`
-
-**Where** inner layer · **States** `hover*`, `active*` · **Renders on** canvas — rasterised per frame
-
-Parameters (all optional, shown with defaults):
-
-- `color`: string = "#ffffff"
-- `opacity`: number = 0.45
-- `cell`: number = 20
-- `arm`: number = 6
-- `radius`: number = 0
-- `reach`: number = 0.85
 
 
 ## Aliases

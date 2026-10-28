@@ -41,7 +41,7 @@ export const EFFECTS = {
   'grid-track': { Effect: GridTrack, states: ['hover', 'active'] },
   'hyper-triangle-crack': { Effect: HyperTriangleCrack, states: ['hover', 'active'] },
   'grid-ripple': { Effect: GridRipple, states: ['active', 'hover'] },
-  'outer-grid': { Effect: OuterGrid, states: ['hover', 'active'] },
+  'outer-grid': { Effect: OuterGrid, states: ['static', 'hover', 'active'] },
 }
 
 /** Shorthands, including the floating-glow modes exposed as their own names. */
