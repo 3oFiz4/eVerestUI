@@ -544,6 +544,27 @@ export default function App() {
                       and segmented toolbars.
                     </p>
                   </div>
+                  <div className="border border-white/20 bg-black p-4 space-y-2">
+                    <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                      3. Underline Anchor Track (variant=&quot;underline&quot;)
+                    </h3>
+                    <p>
+                      A hover-driven 2px sliding rail along the baseline that
+                      glides to the currently hovered button and fades out when
+                      the pointer leaves — zero sticky active state.
+                    </p>
+                  </div>
+                  <div className="border border-white/20 bg-black p-4 space-y-2">
+                    <h3 className="font-bold text-white uppercase tracking-wider text-[11px]">
+                      4. Expanding Context Lens (variant=&quot;lens&quot;)
+                    </h3>
+                    <p>
+                      Hover-only focal accordion: buttons rest at compact icon
+                      width (<code className="text-white">w-9</code>) and expand
+                      to reveal their label (<code className="text-white">hover:w-28</code>)
+                      with inverted white fill on hover.
+                    </p>
+                  </div>
                 </div>
 
                 <Row label="monolithic (default)">
@@ -572,6 +593,36 @@ export default function App() {
                     <Button variant="secondary">HEX</Button>
                     <ButtonGroupSeparator />
                     <Button variant="secondary">UTF-8</Button>
+                  </ButtonGroup>
+                </Row>
+
+                <Row label="underline anchor (hover)">
+                  <ButtonGroup variant="underline">
+                    <Button size="lg">OVERVIEW</Button>
+                    <Button size="lg">TELEMETRY</Button>
+                    <Button size="lg">DEPLOYMENTS</Button>
+                    <Button size="lg">LOGS</Button>
+                  </ButtonGroup>
+                </Row>
+
+                <Row label="expanding lens (hover)">
+                  <ButtonGroup variant="lens">
+                    <Button size="lg">
+                      <LuDownload data-icon="inline-start" />
+                      <span>Pull</span>
+                    </Button>
+                    <Button size="lg">
+                      <LuGitFork data-icon="inline-start" />
+                      <span>Fork</span>
+                    </Button>
+                    <Button size="lg">
+                      <LuSettings data-icon="inline-start" />
+                      <span>Config</span>
+                    </Button>
+                    <Button size="lg">
+                      <LuTrash2 data-icon="inline-start" />
+                      <span>Purge</span>
+                    </Button>
                   </ButtonGroup>
                 </Row>
               </Section>
