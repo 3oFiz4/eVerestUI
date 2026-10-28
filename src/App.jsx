@@ -19,6 +19,7 @@ import {
   BUTTON_VARIANTS,
   BUTTON_GROUP_ORIENTATIONS,
   BUTTON_GROUP_VARIANTS,
+  INPUT_SIZES,
   INPUT_VARIANTS,
 } from "./components";
 
@@ -752,11 +753,7 @@ export default function App() {
               >
                 <Row label="input + button">
                   <ButtonGroup>
-                    <Input
-                      placeholder="git clone https://..."
-                      containerClassName="w-64"
-                      className="h-6"
-                    />
+                    <Input placeholder="git clone https://..." />
                     <Button variant="default">Clone</Button>
                   </ButtonGroup>
                 </Row>
@@ -846,214 +843,138 @@ export default function App() {
                   Input
                 </h1>
                 <p className="max-w-3xl text-sm text-white/70 leading-relaxed">
-                  {`Monochrome text input accepting all native HTML `}
+                  {`Monochrome text input sharing the exact vertical scale and typographic hierarchy as `}
                   <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
-                    {"<input />"}
+                    {"<Button />"}
                   </code>
-                  {` attributes. Every input mounts a subtle 5% opacity micro `}
+                  {`. Every input mounts a 5% opacity micro `}
                   <code className="text-white">outer-grid</code>
-                  {` Overlay inside the field by default and ships with 12 hardware-accelerated architectural focus animations.`}
+                  {` Overlay inside the field by default and supports 12 focus animation variants.`}
                 </p>
               </header>
 
               <Section
-                id="core-inputs"
-                title="Core Input Variations (00 – 05)"
-                note="Click or focus into each field to trigger its kinetic focus state. Every field includes the 5% micro outer-grid overlay."
+                id="variants"
+                title="Input Styles & Animation Variants"
+                note="Click or focus into any input field to preview its focus animation. All inputs include the 5% micro outer-grid overlay."
               >
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>00 // SIMPLE INPUT</span>
-                      <span>STATIC 1PX + 5% OUTER-GRID</span>
-                    </div>
-                    <Input
-                      variant="simple"
-                      placeholder="STANDARD_FIELD_VALUE..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Zero kinetic ornamentation; pure 1px border & micro outer-grid
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>01 // FLOATING INSET MATRIX LABEL</span>
-                      <span>ACTIVE PLACEHOLDER REVEAL</span>
-                    </div>
-                    <Input
-                      variant="floating-label"
-                      label="[01] ENDPOINT_URI"
-                      placeholder="wss://telemetry.everest.ui/stream"
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Label docks on top border; reveals placeholder on focus while empty
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>02 // ACTIVE CROSSHAIR</span>
-                      <span>CORNER RETICLE BRACKETS</span>
-                    </div>
-                    <Input
-                      variant="crosshair"
-                      placeholder="TARGET_COORDINATES..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Corner 2px reticles snap outward & illuminate on focus
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>03 // UNDERLINE BEAM</span>
-                      <span>CENTER-OUTWARD 2PX RAIL</span>
-                    </div>
-                    <Input
-                      variant="underline-beam"
-                      placeholder="ENTER_COMMAND_QUERY..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      2px beam expands from center to 100% width on focus
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>04 // INVERTED FILL SHUTTER</span>
-                      <span>MECHANICAL SOLID WIPE</span>
-                    </div>
-                    <Input variant="shutter" placeholder="TYPE_HERE..." />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      scaleX(1) white shutter wipe with synchronous text inversion
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>05 // GHOST NOTCH INSET</span>
-                      <span>INTERNAL 3PX FRAME RECESSION</span>
-                    </div>
-                    <Input variant="ghost-notch" placeholder="TYPE_HERE..." />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Internal border frame contracts from 0px to 3px on focus
-                    </div>
-                  </div>
-                </div>
+                <Row label="simple (00)">
+                  <Input variant="simple" placeholder="simple" />
+                </Row>
+                <Row label="floating-label (01)">
+                  <Input
+                    variant="floating-label"
+                    label="Endpoint"
+                    placeholder="https://everest.ui"
+                  />
+                </Row>
+                <Row label="crosshair (02)">
+                  <Input variant="crosshair" placeholder="crosshair" />
+                </Row>
+                <Row label="underline-beam (03)">
+                  <Input
+                    variant="underline-beam"
+                    placeholder="underline-beam"
+                  />
+                </Row>
+                <Row label="shutter (04)">
+                  <Input variant="shutter" placeholder="shutter" />
+                </Row>
+                <Row label="ghost-notch (05)">
+                  <Input variant="ghost-notch" placeholder="ghost-notch" />
+                </Row>
+                <Row label="perimeter-trace (06)">
+                  <Input
+                    variant="perimeter-trace"
+                    placeholder="perimeter-trace"
+                  />
+                </Row>
+                <Row label="scanline-sweep (07)">
+                  <Input
+                    variant="scanline-sweep"
+                    placeholder="scanline-sweep"
+                  />
+                </Row>
+                <Row label="pillar-clamp (08)">
+                  <Input variant="pillar-clamp" placeholder="pillar-clamp" />
+                </Row>
+                <Row label="chamfer-lock (09)">
+                  <Input variant="chamfer-lock" placeholder="chamfer-lock" />
+                </Row>
+                <Row label="sonar-pulse (10)">
+                  <Input variant="sonar-pulse" placeholder="sonar-pulse" />
+                </Row>
+                <Row label="split-shutter (11)">
+                  <Input variant="split-shutter" placeholder="split-shutter" />
+                </Row>
               </Section>
 
               <Section
-                id="extended-inputs"
-                title="Extended Architectural Animations (06 – 11)"
-                note="Six additional GPU-composited focus animations built exclusively with transform and opacity."
+                id="sizing"
+                title="Sizing & Hierarchy"
+                note="Input shares the exact same height and font scale as Button (xs, s, sm, default/md, lg, xl)."
               >
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>06 // PERIMETER TRACE</span>
-                      <span>4-EDGE SEQUENTIAL LASER</span>
-                    </div>
-                    <Input
-                      variant="perimeter-trace"
-                      placeholder="AUTH_BEARER_TOKEN..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Staggered scaleX/scaleY 1px beams lock all four edges clockwise
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>07 // SCANLINE SWEEP</span>
-                      <span>CRT MATRIX + RADAR PASS</span>
-                    </div>
-                    <Input
-                      variant="scanline-sweep"
-                      placeholder="SCAN_HOST_SIGNATURE..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Horizontal scanline grating + sweeping vertical radar beam
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>08 // PILLAR CLAMP</span>
-                      <span>DUAL 4PX VERTICAL RAILS</span>
-                    </div>
-                    <Input
-                      variant="pillar-clamp"
-                      placeholder="LOCK_CHANNEL_ID..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Left and right solid white pillars expand from center on focus
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>09 // CHAMFER LOCK</span>
-                      <span>CORNER WEDGES + DATUM TICKS</span>
-                    </div>
-                    <Input
-                      variant="chamfer-lock"
-                      placeholder="VECTOR_SEED_HASH..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Diagonal corner wedges and center datum ticks snap into place
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>10 // SONAR PULSE</span>
-                      <span>OUTER HALO + TELEMETRY BADGE</span>
-                    </div>
-                    <Input
-                      variant="sonar-pulse"
-                      placeholder="PING_TARGET_HOST..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Outer perimeter ring expands 4px outward &amp; illuminates ACT badge
-                    </div>
-                  </div>
-
-                  <div className="border border-white/15 bg-zinc-950/60 p-5 flex flex-col justify-between gap-4">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
-                      <span>11 // SPLIT SHUTTER</span>
-                      <span>BI-DIRECTIONAL DUAL WIPE</span>
-                    </div>
-                    <Input
-                      variant="split-shutter"
-                      placeholder="OVERRIDE_KEY..."
-                    />
-                    <div className="font-mono text-[10px] text-zinc-500">
-                      Top &amp; bottom half-shutters meet at center with text inversion
-                    </div>
-                  </div>
-                </div>
+                <Row label="size hierarchy">
+                  {["xs", "s", "default", "lg", "xl"].map((s) => (
+                    <Input key={s} size={s} placeholder={`size ${s}`} />
+                  ))}
+                </Row>
+                <Row label="matched with Button">
+                  {["xs", "s", "default", "lg", "xl"].map((s) => (
+                    <ButtonGroup key={s}>
+                      <Input
+                        size={s}
+                        placeholder={`size ${s}`}
+                        containerClassName="w-28"
+                      />
+                      <Button size={s} variant="outline">
+                        {s}
+                      </Button>
+                    </ButtonGroup>
+                  ))}
+                </Row>
+                <Row label="font-driven sizing">
+                  <Input className="text-[10px]" placeholder="10px (h-4)" />
+                  <Input className="text-[11px]" placeholder="11px (h-5)" />
+                  <Input className="text-xs" placeholder="12px (h-6 default)" />
+                  <Input className="text-sm" placeholder="14px (h-8)" />
+                </Row>
+                <Row label="state & width">
+                  <Input placeholder="default" />
+                  <Input disabled placeholder="disabled" />
+                  <Input
+                    fullWidth
+                    containerClassName="max-w-64"
+                    placeholder="fullWidth"
+                  />
+                </Row>
+                <Row label="corner radius">
+                  <Input radius={0} placeholder="0 (default)" />
+                  <Input radius={4} placeholder="4" />
+                  <Input radius={999} placeholder="999 (pill)" />
+                </Row>
               </Section>
 
               <Section
-                id="input-examples"
-                title="Usage & Composition"
-                note="Combine Input with ButtonGroup or use any variant standalone."
+                id="examples"
+                title="Input Examples"
+                note="Standard Input usage across variants, sizes, and ButtonGroup composition."
               >
-                <Code>{`<Input variant="simple" placeholder="Standard input..." />
-<Input
-  variant="floating-label"
-  label="[01] ENDPOINT_URI"
-  placeholder="wss://telemetry.everest.ui/stream"
-/>
-<Input variant="crosshair" placeholder="TARGET_COORDINATES..." />
-<Input variant="shutter" placeholder="TYPE_HERE..." />`}</Code>
+                <div className="space-y-4">
+                  <Code>{`<Input variant="simple" placeholder="simple" />
+<Input variant="floating-label" label="Endpoint" placeholder="https://..." />
+<Input variant="crosshair" size="lg" placeholder="crosshair" />
+<ButtonGroup>
+  <Input size="default" placeholder="Search..." />
+  <Button size="default">Submit</Button>
+</ButtonGroup>`}</Code>
+                </div>
               </Section>
 
               <Section
                 id="api"
                 title="Input Props"
-                note="Input forwards all standard HTML <input> attributes to the underlying input element."
+                note="Input forwards all native HTML <input> attributes to the underlying input element."
               >
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse text-left text-xs">
@@ -1072,9 +993,20 @@ export default function App() {
                           "'simple'",
                         ],
                         [
+                          "size",
+                          `'${INPUT_SIZES.join("' | '")}'`,
+                          "'default' — matches Button size scale",
+                        ],
+                        [
+                          "fontSize",
+                          "'xs' | 's' | 'sm' | 'md' | 'lg' | 'xl'",
+                          "auto-scales input dimensions",
+                        ],
+                        ["radius", "number", "0 — sharp corners by default"],
+                        [
                           "label",
                           "string",
-                          "inset floating label text for variant='floating-label'",
+                          "floating inset label text for variant='floating-label'",
                         ],
                         [
                           "placeholder",
@@ -1086,16 +1018,8 @@ export default function App() {
                           "boolean",
                           "true — mounts the 5% opacity micro outer-grid Overlay",
                         ],
-                        [
-                          "containerClassName",
-                          "string",
-                          "classes applied to the outer field wrapper",
-                        ],
-                        [
-                          "className",
-                          "string",
-                          "classes applied to the native <input> element",
-                        ],
+                        ["disabled", "boolean", ""],
+                        ["fullWidth", "boolean", ""],
                       ].map(([p, t, n]) => (
                         <tr key={p} className="border-b border-white/10">
                           <td className="py-2 pr-4">{p}</td>
