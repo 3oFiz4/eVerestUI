@@ -1,7 +1,7 @@
 import gsap from 'gsap'
 import { AnimationBase } from '../AnimationBase.js'
 import { mulberry32, normalizeRadius } from '../geometry.js'
-import { Attractor, clamp, hexA, roundRect } from '../paint.js'
+import { Attractor, clamp, hexA, readableOn, roundRect } from '../paint.js'
 
 /* ------------------------------------------------------------------ shine */
 /**
@@ -907,5 +907,87 @@ export class HyperTriangles extends AnimationBase {
     }
 
     ctx.restore()
+  }
+}
+/* ------------------------------------------------------------------ slide */
+/**
+ * Entry mask clip-paths (inset: top right bottom left).
+ * Edges wipe in from their side; corners expand from their corner point.
+ */
+const SLIDE_CLIPS = {
+  bottom: 'inset(100% 0% 0% 0%)',
+  top: 'inset(0% 0% 100% 0%)',
+  left: 'inset(0% 100% 0% 0%)',
+  right: 'inset(0% 0% 0% 100%)',
+  'corner-top-right': 'inset(0% 0% 100% 100%)',
+  'corner-top-left': 'inset(0% 100% 100% 0%)',
+  'corner-bottom-right': 'inset(100% 0% 0% 100%)',
+  'corner-bottom-left': 'inset(100% 100% 0% 0%)',
+}
+const SLIDE_OPEN = 'inset(0% 0% 0% 0%)'
+
+/**
+ * DOM-hosted, hover-only mask animation. An opaque colour mask wipes across the
+ * button over the stationary original text while revealing stationary contrasting
+ * text inside the mask — zero opacity fade on either label.
+ *
+ * `label` defaults to the host's text, read once at mount.
+ */
+export class Slide extends AnimationBase {
+  static host = 'dom'
+  static kind = 'overlay'
+  static clipped = true
+  static ballistic = true
+  static mask = true
+  static defaults = {
+    from: 'bottom',
+    color: '#ffffff',
+    label: null, // null -> the host's own text
+    textColor: null, // null -> black or white, whichever reads on `color`
+    duration: 0.35,
+    ease: 'power2.inOut',
+  }
+
+  /** The decorated element: the button, or the box's parent. */
+  get host() {
+    return this.layer?.closest?.('button') ?? this.layer?.parentElement?.parentElement ?? null
+  }
+
+  build() {
+    this.text = this.opts.label ?? this.host?.innerText?.trim() ?? ''
+    this.idleClip = SLIDE_CLIPS[this.opts.from] ?? SLIDE_CLIPS.bottom
+
+    this.panel = document.createElement('div')
+    this.panel.style.cssText = `position:absolute;inset:0;overflow:hidden;will-change:clip-path;background:${this.opts.color};clip-path:${this.idleClip};`
+
+    this.labelEl = document.createElement('div')
+    this.labelEl.textContent = this.text
+    this.labelEl.style.cssText = `position:absolute;inset:0;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;pointer-events:none;color:${this.opts.textColor ?? readableOn(this.opts.color)};`
+
+    this.panel.appendChild(this.labelEl)
+    this.mountEl.appendChild(this.panel)
+  }
+
+  layout() {
+    this.idleClip = SLIDE_CLIPS[this.opts.from] ?? SLIDE_CLIPS.bottom
+    const cs = this.host ? window.getComputedStyle(this.host) : null
+    if (cs) {
+      this.labelEl.style.font = `${cs.fontWeight} ${cs.fontSize}/${cs.lineHeight} ${cs.fontFamily}`
+      this.labelEl.style.letterSpacing = cs.letterSpacing
+      this.labelEl.style.padding = cs.padding
+    }
+    if (!this.active) {
+      gsap.set(this.panel, { clipPath: this.idleClip })
+    }
+  }
+
+  onActive(active) {
+    const { duration, ease } = this.opts
+    gsap.to(this.panel, {
+      clipPath: active ? SLIDE_OPEN : this.idleClip,
+      duration: active ? duration : duration * 0.85,
+      ease: active ? ease : 'power2.inOut',
+      overwrite: 'auto',
+    })
   }
 }

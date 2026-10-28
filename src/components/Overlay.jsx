@@ -264,10 +264,10 @@ export function Overlay({
   useImperativeHandle(ref, () => ({ setState: sendState, setPointer: sendPointer }), [sendPointer, sendState])
 
   return (
-    <div ref={boxRef} className={`pointer-events-none absolute inset-0 z-0 ${className}`} aria-hidden="true">
+    <div ref={boxRef} className={`pointer-events-none absolute inset-0 ${className}`} aria-hidden="true">
       <div
         ref={borderRef}
-        className="absolute"
+        className="absolute z-0"
         style={{ inset: -borderOverflow, borderRadius: resolvedRadius ? resolvedRadius + borderOverflow : undefined }}
       />
       <div

@@ -283,6 +283,21 @@ Parameters (all optional, shown with defaults):
 
 These only answer to the hover and active props — at rest there is no cursor to respond to. They receive the pointer position in button-box pixels.
 
+### `slide`
+
+**Where** inner layer · **States** `hover*` · **Renders on** DOM — transform/opacity tweens
+
+Hover-only mask panel: edges wipe in from their side and corners expand from their corner point via `clip-path`, revealing stationary contrasting `label` text (default: the host's own text) inside the mask without fading text transparency.
+
+Parameters (all optional, shown with defaults):
+
+- `from`: string = "bottom"
+- `color`: string = "#ffffff"
+- `label`: any = null
+- `textColor`: any = null
+- `duration`: number = 0.35
+- `ease`: string = "power2.inOut"
+
 ### `grid-track`
 
 **Where** inner layer · **States** `hover*`, `active*` · **Renders on** canvas — rasterised per frame
@@ -386,13 +401,14 @@ Effects that read the cursor behave differently while hovered:
   wandering path to the cursor (set `follow: false` to keep the drift).
 - **ripple** moves its origin to the cursor (set `follow: false` to keep it centred).
 - **grid-track**, **hyper-triangle-crack** centre on the pointer by definition.
+- **slide** is hover-only: it is ignored under `static*` and `active*`.
 - **sparkle**, **glitch**, **floating-lines** ignore hover and run continuously.
 
 ## Choosing a host
 
 Each effect declares how it is drawn, and the engine provisions only that:
 
-- **DOM** (`shine`, `sparkle`) — GSAP tweens `xPercent`/`scale`/`opacity`.
+- **DOM** (`shine`, `slide`, `sparkle`) — GSAP tweens `xPercent`/`scale`/`opacity`.
   Cheapest per frame; no rasterisation.
 - **SVG** (`snake`, `pulse`, `snake-fill`, `corner-grid`, `triangle-lock`) —
   geometry and dash offsets, so shapes stay crisp at any size.

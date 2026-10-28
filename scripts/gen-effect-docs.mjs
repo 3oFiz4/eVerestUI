@@ -40,7 +40,7 @@ const rows = Object.entries(EFFECTS).map(([name, { Effect, states }]) => {
   const props = defaults
     .filter(([k]) => k !== 'fade')
     .map(([k, v]) => {
-      const t = Array.isArray(v) ? 'number[]' : typeof v
+      const t = Array.isArray(v) ? 'number[]' : v === null ? 'any' : typeof v
       const d = Array.isArray(v) ? `[${v.join(', ')}]` : JSON.stringify(v)
       return `\`${k}\`: ${t} = ${d}`
     })
@@ -81,6 +81,8 @@ const EFFECT_DESCRIPTIONS = {
     'Lattice grid and crosshair lines with smooth follower and dedicated cursor marker.',
   'hyper-triangle-crack':
     'Active/click effect: crystalline hyper-triangles branching along the length of crack fissures, focused at the click cursor.',
+  slide:
+    'Hover-only mask panel: edges wipe in from their side and corners expand from their corner point via `clip-path`, revealing stationary contrasting `label` text (default: the host\'s own text) inside the mask without fading text transparency.',
   'grid-ripple':
     'Active/click raster shockwave: expanding gridded circle of tiny squares along the circumference, fading to 100% transparent and deleting itself. Configurable color.',
 }
@@ -146,13 +148,14 @@ Effects that read the cursor behave differently while hovered:
   wandering path to the cursor (set \`follow: false\` to keep the drift).
 - **ripple** moves its origin to the cursor (set \`follow: false\` to keep it centred).
 - **grid-track**, **hyper-triangle-crack** centre on the pointer by definition.
+- **slide** is hover-only: it is ignored under \`static*\` and \`active*\`.
 - **sparkle**, **glitch**, **floating-lines** ignore hover and run continuously.
 
 ## Choosing a host
 
 Each effect declares how it is drawn, and the engine provisions only that:
 
-- **DOM** (\`shine\`, \`sparkle\`) — GSAP tweens \`xPercent\`/\`scale\`/\`opacity\`.
+- **DOM** (\`shine\`, \`slide\`, \`sparkle\`) — GSAP tweens \`xPercent\`/\`scale\`/\`opacity\`.
   Cheapest per frame; no rasterisation.
 - **SVG** (\`snake\`, \`pulse\`, \`snake-fill\`, \`corner-grid\`, \`triangle-lock\`) —
   geometry and dash offsets, so shapes stay crisp at any size.

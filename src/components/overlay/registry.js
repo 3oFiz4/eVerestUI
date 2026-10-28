@@ -8,6 +8,7 @@ import {
   Nodes,
   Ripple,
   Shine,
+  Slide,
   Sparkle,
 } from './effects/inner.js'
 
@@ -27,6 +28,7 @@ export const EFFECTS = {
 
   /* inner layer */
   shine: { Effect: Shine, states: ['static', 'hover', 'active'] },
+  slide: { Effect: Slide, states: ['hover'] },
   sparkle: { Effect: Sparkle, states: ['static', 'hover', 'active'] },
   'floating-glow': { Effect: FloatingGlow, states: ['static', 'hover', 'active'] },
   ripple: { Effect: Ripple, states: ['static', 'hover', 'active'] },

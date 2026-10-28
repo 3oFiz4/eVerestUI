@@ -9,6 +9,15 @@ export function hexA(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
+/** Black or white, whichever stays legible on `hex`. */
+export function readableOn(hex) {
+  const v = String(hex).replace('#', '')
+  const n = parseInt(v.length === 3 ? v.replace(/(.)/g, '$1$1') : v, 16)
+  if (Number.isNaN(n)) return '#000000'
+  const lum = (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255
+  return lum > 0.55 ? '#000000' : '#ffffff'
+}
+
 export function roundRect(ctx, x, y, w, h, tl = 0, tr = tl, br = tl, bl = tl) {
   // arcTo with radius 0 is a plain lineTo, so the sharp-corner case needs no branch
   ctx.beginPath()

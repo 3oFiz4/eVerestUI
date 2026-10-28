@@ -86,22 +86,23 @@ export class AnimationBase {
   createHost() {
     const host = this.constructor.host
     const pad = this.inset
+    const zClass = this.constructor.mask ? 'z-20' : 'z-0'
     if (host === 'svg') {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-      svg.setAttribute('class', 'absolute inset-0 size-full h-full w-full overflow-visible')
+      svg.setAttribute('class', `absolute inset-0 ${zClass} size-full h-full w-full overflow-visible`)
       svg.setAttribute('aria-hidden', 'true')
       this.root = svg
       this.mountEl = svg
     } else if (host === 'canvas') {
       const canvas = document.createElement('canvas')
-      canvas.setAttribute('class', 'absolute inset-0 h-full w-full')
+      canvas.setAttribute('class', `absolute inset-0 ${zClass} h-full w-full`)
       canvas.setAttribute('aria-hidden', 'true')
       this.ctx2d = canvas.getContext('2d')
       this.root = canvas
       this.mountEl = canvas
     } else {
       const div = document.createElement('div')
-      div.setAttribute('class', 'absolute inset-0 h-full w-full')
+      div.setAttribute('class', `absolute inset-0 ${zClass} h-full w-full`)
       div.setAttribute('aria-hidden', 'true')
       this.root = div
       // Children live in a button-box-sized frame, so their coordinates match
