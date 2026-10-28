@@ -11,7 +11,7 @@ export function createEngine(layer, entries, inset = 0) {
 
   for (const entry of entries) {
     if (!entry?.Effect) continue
-    const instance = new entry.Effect(layer, { ...(entry.modify || {}), inset })
+    const instance = new entry.Effect(layer, { ...(entry.modify || {}), inset, state: entry.state })
     instances.push({ state: entry.state, instance })
   }
   if (!instances.length) {

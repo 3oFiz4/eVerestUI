@@ -223,50 +223,65 @@ export class Pulse extends AnimationBase {
     if (w <= 0 || h <= 0) return
     const o = this.opts
     const r = normalizeRadius(o.radius + o.gap, w, h)
+    const origin = `${w / 2} ${h / 2}`
+    if (this._loop) {
+      this._loop.forEach((t) => t.kill())
+      this._loop = null
+    }
     this.rings.forEach((node) => {
       node.setAttribute('x', o.gap)
       node.setAttribute('y', o.gap)
       node.setAttribute('width', Math.max(0, w - o.gap * 2))
       node.setAttribute('height', Math.max(0, h - o.gap * 2))
       node.setAttribute('rx', r.tl)
-      gsap.set(node, { transformOrigin: '50% 50%', scale: o.from, opacity: 0, attr: { 'stroke-width': o.thickness } })
+      gsap.set(node, { svgOrigin: origin, scale: o.from, opacity: 0, attr: { 'stroke-width': o.thickness } })
     })
+    if (this.state === 'static') {
+      const dur = 1 / Math.max(0.05, o.speed)
+      this._loop = this.rings.map((node, i) =>
+        gsap
+          .timeline({ repeat: -1, delay: (i / this.rings.length) * dur })
+          .fromTo(
+            node,
+            { svgOrigin: origin, scale: o.from, opacity: o.peak },
+            { svgOrigin: origin, scale: o.to, opacity: 0, duration: dur, ease: 'power2.out', force3D: true }
+          )
+      )
+    }
   }
 
   onActive(active) {
     super.onActive(active)
-    if (!active) return
+    if (!active || this.state === 'static') return
+    const { w, h } = this.size
+    if (w <= 0 || h <= 0) return
     const o = this.opts
+    const origin = `${w / 2} ${h / 2}`
     const dur = 0.6 / Math.max(0.1, o.speed)
     this.rings.forEach((node, i) => {
       gsap.fromTo(
         node,
-        { scale: o.from, opacity: o.peak },
+        { svgOrigin: origin, scale: o.from, opacity: o.peak },
         {
+          svgOrigin: origin,
           scale: o.to,
           opacity: 0,
           duration: dur,
           delay: (i / this.rings.length) * 0.1,
           ease: 'power2.out',
           force3D: true,
+          overwrite: 'auto',
         }
       )
     })
   }
 
-  animate() {
-    // Continuous loop when in static state
-    const o = this.opts
-    const dur = 1 / Math.max(0.05, o.speed)
-    this.rings.forEach((node, i) => {
-      gsap
-        .timeline({ repeat: -1, delay: (i / this.rings.length) * dur })
-        .fromTo(
-          node,
-          { scale: o.from, opacity: o.peak },
-          { scale: o.to, opacity: 0, duration: dur, ease: 'power2.out', force3D: true }
-        )
-    })
+  destroy() {
+    if (this._loop) {
+      this._loop.forEach((t) => t.kill())
+      this._loop = null
+    }
+    super.destroy()
   }
 }
 
@@ -415,6 +430,7 @@ export class SnakeFill extends AnimationBase {
     this.path.setAttribute('stroke-dasharray', `${per}`)
     const startOffset = (o.start || 0) * per
     this.path.setAttribute('stroke-dashoffset', `${per + startOffset}`)
+    if (this.active) this.onActive(true)
   }
 
   onActive(active) {

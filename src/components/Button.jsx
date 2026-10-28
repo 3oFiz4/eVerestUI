@@ -217,7 +217,7 @@ export function Button({
           focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black
           enabled:active:translate-y-px active:not-aria-[haspopup]:translate-y-px
           disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black disabled:pointer-events-none
-          [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5
+          [&_svg]:pointer-events-none
           has-[[data-icon=inline-end]]:pr-2 has-[[data-icon=inline-start]]:pl-2
           ${v.base} ${s} ${fullWidth ? 'w-full' : ''} ${className}`}
         {...props}
@@ -230,7 +230,7 @@ export function Button({
           />
         )}
         <span
-          className={`relative z-10 inline-flex items-center gap-[inherit] ${
+          className={`relative z-10 inline-flex items-center gap-[inherit] [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 ${
             variant === 'link'
               ? 'after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200 after:ease-out group-hover/button:after:scale-x-100 group-focus-visible/button:after:scale-x-100'
               : ''
