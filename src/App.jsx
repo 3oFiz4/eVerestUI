@@ -8,6 +8,7 @@ import {
   LuTrash2,
 } from "react-icons/lu";
 import {
+  Badge,
   Button,
   ButtonGroup,
   ButtonGroupSeparator,
@@ -137,6 +138,7 @@ const EFFECT_NAMES = [
 function resolveHashComponent() {
   if (typeof window === "undefined") return "Button";
   const h = window.location.hash.toLowerCase();
+  if (h === "#badge") return "Badge";
   if (h === "#overlay") return "Overlay";
   if (h === "#button-group" || h === "#buttongroup") return "Button Group";
   if (h === "#card") return "Card";
@@ -169,6 +171,7 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const showBadge = activeComponent === "Badge" || activeComponent === "All";
   const showButton = activeComponent === "Button" || activeComponent === "All";
   const showButtonGroup =
     activeComponent === "Button Group" || activeComponent === "All";
@@ -187,7 +190,7 @@ export default function App() {
               eVerestUI / Components
             </span>
             <ButtonGroup variant="monolithic">
-              {["Button", "Button Group", "Card", "Input", "Overlay", "All"].map(
+              {["Badge", "Button", "Button Group", "Card", "Input", "Overlay", "All"].map(
                 (item) => (
                   <Button
                     key={item}
@@ -201,6 +204,215 @@ export default function App() {
               )}
             </ButtonGroup>
           </div>
+
+          {showBadge && (
+            <>
+              <header className="space-y-3">
+                <h1 className="text-3xl font-bold tracking-tight text-white">
+                  Badge
+                </h1>
+                <p className="max-w-3xl text-sm text-white/70 leading-relaxed">
+                  Status telemetry and metadata badges built on Gestalt grouping and typographic hierarchy. Badges do not resemble clickable buttons — they provide instant visual status recognition without adding interactive cognitive load.
+                </p>
+              </header>
+
+              <Section
+                id="badge-variants"
+                title="Badge Variants"
+                note="Typographic delimiters, flags, pulse dots, and angled geometries from @references/badge_idea.svg."
+              >
+                <Row label="bracket (status)">
+                  <Badge variant="bracket" spinning>
+                    DEPLOYING
+                  </Badge>
+                  <Badge variant="bracket">READY</Badge>
+                  <Badge variant="bracket" color="#22c55e">
+                    STABLE
+                  </Badge>
+                  <Badge variant="bracket" color="#ef4444">
+                    OFFLINE
+                  </Badge>
+                </Row>
+
+                <Row label="ledger-flag">
+                  <Badge variant="ledger-flag">STATUS</Badge>
+                  <Badge variant="ledger-flag" color="#22c55e">
+                    PRODUCTION
+                  </Badge>
+                  <Badge variant="ledger-flag" color="#f59e0b">
+                    STAGING
+                  </Badge>
+                  <Badge variant="ledger-flag" color="#ef4444">
+                    DEPRECATED
+                  </Badge>
+                </Row>
+
+                <Row label="pulse (modifiable)">
+                  <Badge variant="pulse">READY</Badge>
+                  <Badge
+                    variant="pulse"
+                    color="#22c55e"
+                    modify={{ dotSize: 7, pulseSpeed: "1s" }}
+                  >
+                    LIVE
+                  </Badge>
+                  <Badge
+                    variant="pulse"
+                    color="#f59e0b"
+                    modify={{ dotSize: 7, pulseSpeed: "0.8s" }}
+                  >
+                    SYNCING
+                  </Badge>
+                  <Badge
+                    variant="pulse"
+                    color="#ef4444"
+                    modify={{ dotSize: 7, pulse: false }}
+                  >
+                    HALTED
+                  </Badge>
+                </Row>
+
+                <Row label="key-value">
+                  <Badge variant="key-value" labelKey="BRANCH">
+                    main
+                  </Badge>
+                  <Badge variant="key-value" labelKey="REGION" separator="->">
+                    us-east-1
+                  </Badge>
+                  <Badge
+                    variant="key-value"
+                    labelKey="PING"
+                    color="#22c55e"
+                  >
+                    12ms
+                  </Badge>
+                </Row>
+
+                <Row label="slash">
+                  <Badge variant="slash" labelKey="ENV">
+                    production
+                  </Badge>
+                  <Badge variant="slash" labelKey="VERSION">
+                    v1.4.2
+                  </Badge>
+                  <Badge variant="slash" color="#38bdf8">
+                    TELEMETRY
+                  </Badge>
+                </Row>
+
+                <Row label="index-ribbon">
+                  <Badge variant="index-ribbon" labelKey="INDEX">
+                    01 // CORE
+                  </Badge>
+                  <Badge
+                    variant="index-ribbon"
+                    labelKey="PORT"
+                    color="#22c55e"
+                  >
+                    :8080
+                  </Badge>
+                </Row>
+
+                <Row label="parallelogram (idea #1)">
+                  <Badge variant="parallelogram">SUCCESS</Badge>
+                  <Badge variant="parallelogram" color="#22c55e">
+                    PASSED
+                  </Badge>
+                  <Badge variant="parallelogram" color="#f59e0b">
+                    WARNING
+                  </Badge>
+                  <Badge variant="parallelogram" color="#ef4444">
+                    CRITICAL
+                  </Badge>
+                </Row>
+
+                <Row label="chevron-flag (idea #2)">
+                  <Badge variant="chevron-flag">RELEASED</Badge>
+                  <Badge variant="chevron-flag" color="#22c55e">
+                    VERIFIED
+                  </Badge>
+                  <Badge variant="chevron-flag" color="#38bdf8">
+                    METRIC
+                  </Badge>
+                </Row>
+
+                <Row label="delta-point (idea #3)">
+                  <Badge variant="delta-point">SIGNAL</Badge>
+                  <Badge variant="delta-point" color="#22c55e">
+                    ACTIVE
+                  </Badge>
+                  <Badge variant="delta-point" color="#f59e0b">
+                    CAUTION
+                  </Badge>
+                </Row>
+              </Section>
+
+              <Section
+                id="badge-sizing"
+                title="Badge Sizing (xs, sm, default, lg)"
+                note="Scaling from ultra-dense micro tags to prominent technical section labels."
+              >
+                <Row label="scale">
+                  {["xs", "sm", "default", "lg"].map((sz) => (
+                    <Badge key={sz} size={sz} variant="bracket" spinning>
+                      {sz.toUpperCase()}
+                    </Badge>
+                  ))}
+                </Row>
+                <Row label="custom render prop">
+                  <Badge
+                    render={() => (
+                      <span className="font-mono text-xs text-white/70">
+                        CUSTOM: <span className="text-white font-bold">NODE_ENV</span>
+                      </span>
+                    )}
+                  />
+                </Row>
+              </Section>
+
+              <Section
+                id="badge-overlay"
+                title="Badge + Overlay Composition"
+                note="Badges act as hosts for Overlay effects, enabling stateful light passes, subtle glows, and border shines."
+              >
+                <div className="flex flex-wrap items-center gap-6">
+                  <Badge
+                    variant="parallelogram"
+                    className="relative px-5 py-2 overflow-hidden"
+                  >
+                    <Overlay
+                      staticOverlayAnimVar="shine"
+                      staticOverlayAnimVarModify={{ speed: 1.5, blur: 1 }}
+                    />
+                    <span className="relative z-10">SHINE BADGE</span>
+                  </Badge>
+
+                  <Badge
+                    variant="bracket"
+                    className="relative border border-white/20 px-3 py-1.5"
+                  >
+                    <Overlay
+                      staticBorderAnimVar="snake"
+                      staticBorderAnimVarModify={{ thickness: 1.5, speed: 1.5 }}
+                    />
+                    <span className="relative z-10">SNAKE TELEMETRY</span>
+                  </Badge>
+
+                  <Badge
+                    variant="pulse"
+                    color="#22c55e"
+                    className="relative border border-green-500/30 px-3 py-1.5"
+                  >
+                    <Overlay
+                      staticBorderAnimVar="glow"
+                      staticBorderAnimVarModify={{ color: "#22c55e", glowSize: 12, intensity: 0.6 }}
+                    />
+                    <span className="relative z-10">ACTIVE RUNNER</span>
+                  </Badge>
+                </div>
+              </Section>
+            </>
+          )}
 
           {showButton && (
             <>

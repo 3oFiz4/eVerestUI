@@ -20,6 +20,7 @@ assert.equal(lib.cn('px-2.5 bg-black text-white', 'px-6 bg-white'), 'text-white 
 // 3. forwardRef across components
 const forwardRefSym = Symbol.for('react.forward_ref')
 for (const name of [
+  'Badge',
   'Button',
   'Input',
   'ButtonGroup',
@@ -97,7 +98,29 @@ const customCard = renderToStaticMarkup(
 )
 assert.ok(customCard.includes('width:12px') && customCard.includes('border-color:#22c55e'))
 
-// 5. Input variants + forwardRef + className merge
+// 5. Badge variants & props test
+assert.equal(lib.BADGE_VARIANTS.length, 9, 'Expected 9 Badge variants')
+for (const variant of lib.BADGE_VARIANTS) {
+  const badgeHtml = renderToStaticMarkup(
+    React.createElement(
+      lib.Badge,
+      { variant, size: 'sm', color: '#22c55e', ref: createRef() },
+      'STATUS'
+    )
+  )
+  assert.ok(badgeHtml.includes(`data-variant="${variant}"`), `Missing data-variant=${variant}`)
+  assert.ok(badgeHtml.includes('data-slot="badge"'))
+}
+
+// 5b. Badge render prop & Overlay hosting
+const renderBadgeHtml = renderToStaticMarkup(
+  React.createElement(lib.Badge, {
+    render: () => React.createElement('span', null, 'CUSTOM_OUTPUT'),
+  })
+)
+assert.ok(renderBadgeHtml.includes('CUSTOM_OUTPUT'))
+
+// 6. Input variants + forwardRef + className merge
 for (const variant of lib.INPUT_VARIANTS) {
   const html = renderToStaticMarkup(
     React.createElement(lib.Input, { variant, className: 'px-5', ref: createRef() })

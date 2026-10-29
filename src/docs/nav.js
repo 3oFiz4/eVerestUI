@@ -4,6 +4,7 @@
  */
 export const ACTIVE = "Button";
 export const LIVE_COMPONENTS = [
+  "Badge",
   "Button",
   "Button Group",
   "Card",

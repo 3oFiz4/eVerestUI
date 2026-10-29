@@ -9,7 +9,19 @@ export * as SeparatorPrimitive from '@radix-ui/react-separator'
 export * as LabelPrimitive from '@radix-ui/react-label'
 export * as TooltipPrimitive from '@radix-ui/react-tooltip'
 export { Overlay } from './Overlay'
-export { Button, buttonVariants, BUTTON_SIZES, BUTTON_VARIANTS, variantAccent } from './Button'
+export {
+  Badge,
+  badgeVariants,
+  BADGE_SIZES,
+  BADGE_VARIANTS,
+} from './Badge'
+export {
+  Button,
+  buttonVariants,
+  BUTTON_SIZES,
+  BUTTON_VARIANTS,
+  variantAccent,
+} from './Button'
 export {
   ButtonGroup,
   ButtonGroupSeparator,
