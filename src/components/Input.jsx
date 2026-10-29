@@ -95,7 +95,8 @@ export function Input({
   const s = SIZES[resolvedSize] ?? SIZES.default
   const widthClass = fullWidth ? 'w-full' : 'w-48'
 
-  const baseInput = `peer relative z-10 w-full bg-transparent font-mono text-white placeholder:text-white/35 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40 ${s} ${className}`
+  const coreInput = `peer relative z-10 w-full bg-transparent font-mono text-white focus:outline-none disabled:cursor-not-allowed disabled:opacity-40 ${s} ${className}`
+  const baseInput = `${coreInput} placeholder:text-white/35`
 
   if (mode === 'floating-label') {
     const floatLabel = label ?? 'Endpoint'
@@ -114,10 +115,10 @@ export function Input({
           disabled={disabled}
           placeholder={activePlaceholder}
           style={{ borderRadius: radius }}
-          className={`${baseInput} border border-white/30 placeholder:text-transparent focus:border-white focus:placeholder:text-white/35 transition-colors duration-150`}
+          className={`${coreInput} border border-white/30 placeholder:text-transparent focus:border-white focus:placeholder:text-white/35 transition-colors duration-150`}
           {...props}
         />
-        <label className="pointer-events-none absolute left-2 top-1/2 z-20 -translate-y-1/2 origin-left font-mono text-[10px] leading-none text-white/50 transition-all duration-200 ease-out peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:scale-90 peer-focus:bg-black peer-focus:px-1 peer-focus:text-white peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-1/2 peer-not-placeholder-shown:scale-90 peer-not-placeholder-shown:bg-black peer-not-placeholder-shown:px-1 peer-not-placeholder-shown:text-white/80">
+        <label className="pointer-events-none absolute left-2.5 top-1/2 z-20 -translate-y-1/2 origin-left font-mono text-[11px] leading-none text-white/50 transition-all duration-200 ease-out peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:scale-75 peer-focus:bg-black peer-focus:px-1 peer-focus:text-white peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-1/2 peer-not-placeholder-shown:scale-75 peer-not-placeholder-shown:bg-black peer-not-placeholder-shown:px-1 peer-not-placeholder-shown:text-white/80">
           {floatLabel}
         </label>
       </div>
