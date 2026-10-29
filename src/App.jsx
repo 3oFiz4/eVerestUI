@@ -12,6 +12,12 @@ import {
   ButtonGroup,
   ButtonGroupSeparator,
   Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardAction,
+  CardContent,
+  CardFooter,
   Input,
   Overlay,
   Sidebar,
@@ -19,6 +25,8 @@ import {
   BUTTON_VARIANTS,
   BUTTON_GROUP_ORIENTATIONS,
   BUTTON_GROUP_VARIANTS,
+  CARD_SIZES,
+  CARD_VARIANTS,
   INPUT_SIZES,
   INPUT_VARIANTS,
 } from "./components";
@@ -131,6 +139,7 @@ function resolveHashComponent() {
   const h = window.location.hash.toLowerCase();
   if (h === "#overlay") return "Overlay";
   if (h === "#button-group" || h === "#buttongroup") return "Button Group";
+  if (h === "#card") return "Card";
   if (h === "#input") return "Input";
   if (h === "#all") return "All";
   return "Button";
@@ -163,6 +172,7 @@ export default function App() {
   const showButton = activeComponent === "Button" || activeComponent === "All";
   const showButtonGroup =
     activeComponent === "Button Group" || activeComponent === "All";
+  const showCard = activeComponent === "Card" || activeComponent === "All";
   const showInput = activeComponent === "Input" || activeComponent === "All";
   const showOverlay =
     activeComponent === "Overlay" || activeComponent === "All";
@@ -177,7 +187,7 @@ export default function App() {
               eVerestUI / Components
             </span>
             <ButtonGroup variant="monolithic">
-              {["Button", "Button Group", "Input", "Overlay", "All"].map(
+              {["Button", "Button Group", "Card", "Input", "Overlay", "All"].map(
                 (item) => (
                   <Button
                     key={item}
@@ -872,6 +882,302 @@ export default function App() {
             </>
           )}
 
+          {showCard && (
+            <>
+              <header className="space-y-3">
+                <h1 className="text-3xl font-bold tracking-tight text-white">
+                  Card
+                </h1>
+                <p className="max-w-3xl text-sm text-white/70 leading-relaxed">
+                  {`Monolithic compound Card system (`}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<Card />"}
+                  </code>
+                  {`, `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<CardHeader />"}
+                  </code>
+                  {`, `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<CardTitle />"}
+                  </code>
+                  {`, `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<CardDescription />"}
+                  </code>
+                  {`, `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<CardAction />"}
+                  </code>
+                  {`, `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<CardContent />"}
+                  </code>
+                  {`, `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<CardFooter />"}
+                  </code>
+                  {`). Variant and size defined on `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<Card />"}
+                  </code>
+                  {` cascade automatically to all child slots (for example, `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"vertical-gutter"}
+                  </code>
+                  {` rotates `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"<CardTitle />"}
+                  </code>
+                  {` along the left spine, and `}
+                  <code className="border border-white/30 bg-black px-1.5 py-0.5 text-xs text-white">
+                    {"shutter-split"}
+                  </code>
+                  {` inverts the header to solid white).`}
+                </p>
+              </header>
+
+              <Section
+                id="card-variants"
+                title="10 Structural Variants"
+                note="5 foundational templates (Ledger Bracket, Milled Chassis, Vertical Gutter, Segmented, Shutter Split) + 5 monolithic FUI/editorial architectures (Crosshair Grid, Chamfer Notch, Hazard Telemetry, Pillar Monolith, Index Tab)."
+              >
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {[
+                    [
+                      "ledger-bracket",
+                      "01 // Ledger Bracket",
+                      "L-bracket corner reticles + crisp 1px ledger rules",
+                    ],
+                    [
+                      "milled-chassis",
+                      "02 // Milled Chassis",
+                      "Double-walled CNC perimeter + recessed inner chamber",
+                    ],
+                    [
+                      "vertical-gutter",
+                      "03 // Vertical Gutter",
+                      "Left spine with rotated vertical CardTitle & top action",
+                    ],
+                    [
+                      "segmented",
+                      "04 // Segmented Cockpit",
+                      "Discrete 1px-bordered modular cells in recessed rack",
+                    ],
+                    [
+                      "shutter-split",
+                      "05 // Shutter Split",
+                      "Inverted solid-white header shutter over pitch-black body",
+                    ],
+                    [
+                      "crosshair-grid",
+                      "06 // Crosshair Grid",
+                      "Exposed hairline grid + intersection '+' corner glyphs",
+                    ],
+                    [
+                      "chamfer-notch",
+                      "07 // Chamfer Notch",
+                      "45-degree beveled diagonal corners with 1px polygon shell",
+                    ],
+                    [
+                      "hazard-telemetry",
+                      "08 // Hazard Telemetry",
+                      "Top -45deg diagonal scanline hazard bar + datum square",
+                    ],
+                    [
+                      "pillar-monolith",
+                      "09 // Pillar Monolith",
+                      "Heavy 4px left solid-white structural spine + open bay",
+                    ],
+                    [
+                      "index-tab",
+                      "10 // Index Tab",
+                      "Top-docked solid dossier register tab + dashed rules",
+                    ],
+                  ].map(([variant, title, desc]) => (
+                    <div key={variant} className="space-y-2">
+                      <div className="font-mono text-[11px] text-white/50">
+                        {title} — <span className="text-white/80">{variant}</span>
+                      </div>
+                      <Card variant={variant} size="default" fullWidth>
+                        <CardHeader>
+                          <div>
+                            <CardTitle>Card Title</CardTitle>
+                            <CardDescription>{desc}</CardDescription>
+                          </div>
+                          <CardAction>
+                            <Button
+                              size={variant === "vertical-gutter" ? "icon-xs" : "xs"}
+                              variant="outline"
+                            >
+                              {variant === "vertical-gutter" ? "▲" : "Card Action"}
+                            </Button>
+                          </CardAction>
+                        </CardHeader>
+                        <CardContent>
+                          Card Content paragraph text describing the main payload and component details.
+                        </CardContent>
+                        <CardFooter>
+                          <span>Card Footer text</span>
+                          <span>SYS // OK</span>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+
+              <Section
+                id="card-sizes"
+                title="Card Sizing Scale (sm, default, lg)"
+                note="Setting size on <Card size='...' /> cascades padding and typography proportions to CardHeader, CardTitle, CardDescription, CardContent, and CardFooter."
+              >
+                <div className="flex flex-wrap items-start gap-6">
+                  {["sm", "default", "lg"].map((sz) => (
+                    <Card key={sz} variant="ledger-bracket" size={sz}>
+                      <CardHeader>
+                        <CardTitle>Size: {sz}</CardTitle>
+                        <CardDescription>Cascaded slot proportions</CardDescription>
+                        <CardAction>
+                          <Button size="xs" variant="outline">
+                            {sz.toUpperCase()}
+                          </Button>
+                        </CardAction>
+                      </CardHeader>
+                      <CardContent>
+                        Card Content paragraph text describing the main payload and component details.
+                      </CardContent>
+                      <CardFooter>
+                        <span>Card Footer</span>
+                        <span>SIZE={sz.toUpperCase()}</span>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              </Section>
+
+              <Section
+                id="card-overlay"
+                title="Card + Overlay Composition"
+                note="Card hosts <Overlay /> directly on its outer border-box across any structural variant."
+              >
+                <div className="flex flex-wrap items-start gap-6">
+                  <Card variant="ledger-bracket">
+                    <Overlay
+                      staticBorderAnimVar="snake"
+                      staticBorderAnimVarModify={{ thickness: 2 }}
+                      hoverOverlayAnimVar="grid-track"
+                    />
+                    <CardHeader>
+                      <CardTitle>Snake + Grid Track</CardTitle>
+                      <CardDescription>Ledger Bracket + Overlay</CardDescription>
+                      <CardAction>
+                        <Button size="xs" variant="outline">
+                          Inspect
+                        </Button>
+                      </CardAction>
+                    </CardHeader>
+                    <CardContent>
+                      Hover across the card surface to track the cursor lattice while the perimeter snake orbits.
+                    </CardContent>
+                    <CardFooter>
+                      <span>LAYER: BORDER+INNER</span>
+                      <span>ACTIVE</span>
+                    </CardFooter>
+                  </Card>
+
+                  <Card variant="vertical-gutter">
+                    <Overlay
+                      staticOverlayAnimVar="halftone"
+                      staticOverlayAnimVarModify={{ grid: 8 }}
+                      activeOverlayAnimVar="ripple"
+                    />
+                    <CardHeader>
+                      <CardAction>
+                        <Button size="icon-xs" variant="outline">
+                          ▲
+                        </Button>
+                      </CardAction>
+                      <CardTitle>Telemetry</CardTitle>
+                      <CardDescription>Vertical</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      Click anywhere on the card to trigger a ballistic shockwave across the halftone matrix.
+                    </CardContent>
+                    <CardFooter>
+                      <span>GUTTER // 03</span>
+                      <span>READY</span>
+                    </CardFooter>
+                  </Card>
+                </div>
+
+                <div className="mt-6">
+                  <Code>{`<Card variant="vertical-gutter" size="default">
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Card Description</CardDescription>
+    <CardAction>
+      <Button size="icon-xs" variant="outline">▲</Button>
+    </CardAction>
+  </CardHeader>
+  <CardContent>
+    Card Content paragraph text describing the main payload and component details.
+  </CardContent>
+  <CardFooter>Card Footer text</CardFooter>
+</Card>`}</Code>
+                </div>
+              </Section>
+
+              <Section
+                id="card-api"
+                title="Card & Subcomponent Props"
+                note="All 7 components support forwardRef, asChild polymorphism, and optional local variant/size overrides."
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-left text-xs">
+                    <thead className="text-white/60">
+                      <tr className="border-b border-white/20">
+                        <th className="py-2 pr-4 font-normal">prop</th>
+                        <th className="py-2 pr-4 font-normal">type</th>
+                        <th className="py-2 font-normal">notes</th>
+                      </tr>
+                    </thead>
+                    <tbody className="font-mono text-white/90">
+                      {[
+                        [
+                          "variant",
+                          `'${CARD_VARIANTS.join("' | '")}'`,
+                          "'ledger-bracket' — cascades via CardContext to all subcomponents",
+                        ],
+                        [
+                          "size",
+                          `'${CARD_SIZES.join("' | '")}'`,
+                          "'default' — cascades padding and font scale to all subcomponents",
+                        ],
+                        [
+                          "fullWidth",
+                          "boolean",
+                          "false — removes max-w cap so Card spans 100% of container",
+                        ],
+                        [
+                          "asChild",
+                          "boolean",
+                          "false — merges props/classes onto single child element via Radix Slot",
+                        ],
+                      ].map(([p, t, n]) => (
+                        <tr key={p} className="border-b border-white/10">
+                          <td className="py-2 pr-4">{p}</td>
+                          <td className="py-2 pr-4 text-white/60">{t}</td>
+                          <td className="py-2 font-sans text-white/60">{n}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Section>
+            </>
+          )}
+
           {showInput && (
             <>
               <header className="space-y-3">
@@ -1408,18 +1714,21 @@ export default function App() {
                   </div>
                 </Row>
                 <Row label="Card Component">
-                  <Card>
+                  <Card variant="ledger-bracket">
                     <Overlay
                       staticBorderAnimVar="glow"
                       staticOverlayAnimVar="sparkle"
                       staticOverlayAnimVarModify={{ size: 14 }}
                     />
-                    <div className="relative z-10 space-y-2">
-                      <h3 className="text-lg font-bold text-white">Card</h3>
-                      <p className="text-sm text-white/60">
+                    <CardHeader>
+                      <CardTitle>Card</CardTitle>
+                      <CardDescription>
                         Glow outline, sparkle interior
-                      </p>
-                    </div>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      Compound Card surface hosting border and interior Overlay layers.
+                    </CardContent>
                   </Card>
                 </Row>
               </Section>

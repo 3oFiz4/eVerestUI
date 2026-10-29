@@ -25,6 +25,23 @@ export {
   INPUT_SIZES,
   INPUT_VARIANTS,
 } from './Input'
-export { Card, cardVariants } from './Card'
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardAction,
+  CardContent,
+  CardFooter,
+  cardVariants,
+  cardHeaderVariants,
+  cardTitleVariants,
+  cardDescriptionVariants,
+  cardActionVariants,
+  cardContentVariants,
+  cardFooterVariants,
+  CARD_SIZES,
+  CARD_VARIANTS,
+} from './Card'
 export { Sidebar } from './Sidebar'
 export { EFFECT_NAMES } from './overlay/registry'

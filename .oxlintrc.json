@@ -21,7 +21,15 @@
           "inputContainerVariants",
           "INPUT_SIZES",
           "INPUT_VARIANTS",
-          "cardVariants"
+          "cardVariants",
+          "cardHeaderVariants",
+          "cardTitleVariants",
+          "cardDescriptionVariants",
+          "cardActionVariants",
+          "cardContentVariants",
+          "cardFooterVariants",
+          "CARD_SIZES",
+          "CARD_VARIANTS"
         ]
       }
     ]

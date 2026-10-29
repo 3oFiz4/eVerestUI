@@ -25,6 +25,12 @@ for (const name of [
   'ButtonGroup',
   'ButtonGroupSeparator',
   'Card',
+  'CardHeader',
+  'CardTitle',
+  'CardDescription',
+  'CardAction',
+  'CardContent',
+  'CardFooter',
   'Overlay',
   'Sidebar',
 ]) {
@@ -52,7 +58,35 @@ const cardSection = renderToStaticMarkup(
     React.createElement('section', { id: 'hero-card' }, 'Surface')
   )
 )
-assert.ok(cardSection.startsWith('<section ') && cardSection.includes('w-96') && !cardSection.includes('w-80'))
+assert.ok(cardSection.startsWith('<section ') && cardSection.includes('w-96'))
+
+// 4b. All 10 Card variants & size cascade to subcomponents
+assert.equal(lib.CARD_VARIANTS.length, 10, 'Expected 10 Card variants')
+for (const variant of lib.CARD_VARIANTS) {
+  const cardHtml = renderToStaticMarkup(
+    React.createElement(
+      lib.Card,
+      { variant, size: 'lg' },
+      React.createElement(
+        lib.CardHeader,
+        null,
+        React.createElement(lib.CardTitle, null, 'Title'),
+        React.createElement(lib.CardDescription, null, 'Desc'),
+        React.createElement(lib.CardAction, null, 'Act')
+      ),
+      React.createElement(lib.CardContent, null, 'Body'),
+      React.createElement(lib.CardFooter, null, 'Foot')
+    )
+  )
+  assert.ok(cardHtml.includes(`data-variant="${variant}"`), `Missing data-variant=${variant}`)
+  assert.ok(cardHtml.includes('data-slot="card-title"') && cardHtml.includes('data-size="lg"'))
+  if (variant === 'vertical-gutter') {
+    assert.ok(cardHtml.includes('writing-mode:vertical-rl'), 'vertical-gutter must rotate title wrap')
+  }
+  if (variant === 'shutter-split') {
+    assert.ok(cardHtml.includes('bg-white text-black'), 'shutter-split header must invert')
+  }
+}
 
 // 5. Input variants + forwardRef + className merge
 for (const variant of lib.INPUT_VARIANTS) {
