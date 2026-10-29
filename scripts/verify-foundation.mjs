@@ -88,6 +88,15 @@ for (const variant of lib.CARD_VARIANTS) {
   }
 }
 
+// 4c. Card modify prop test
+const customCard = renderToStaticMarkup(
+  React.createElement(
+    lib.Card,
+    { variant: 'ledger-bracket', modify: { bracketSize: 12, bracketThickness: 2, bracketColor: '#22c55e' } }
+  )
+)
+assert.ok(customCard.includes('width:12px') && customCard.includes('border-color:#22c55e'))
+
 // 5. Input variants + forwardRef + className merge
 for (const variant of lib.INPUT_VARIANTS) {
   const html = renderToStaticMarkup(

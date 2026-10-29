@@ -65,6 +65,7 @@ function resolveCardSize(size) {
 const CardContext = createContext({
   variant: 'ledger-bracket',
   size: 'default',
+  modify: {},
 })
 
 const useCardContext = () => useContext(CardContext)
@@ -74,17 +75,17 @@ export const cardVariants = cva(
   {
     variants: {
       variant: {
-        'ledger-bracket': 'flex flex-col border border-white/25 bg-black',
-        'milled-chassis': 'flex flex-col border border-white/30 bg-black p-1.5',
-        'vertical-gutter': 'grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] border border-white/25 bg-black',
-        segmented: 'flex flex-col gap-1 border border-white/25 bg-white/[0.06] p-1',
-        'shutter-split': 'flex flex-col border border-white bg-black',
-        'crosshair-grid': 'flex flex-col border border-white/25 bg-black',
+        'ledger-bracket': 'flex flex-col border border-white/20 bg-black',
+        'milled-chassis': 'flex flex-col border border-white/20 bg-black p-1',
+        'vertical-gutter': 'grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] border border-white/20 bg-black',
+        segmented: 'flex flex-col gap-1 border border-white/15 bg-white/[0.03] p-1',
+        'shutter-split': 'flex flex-col border border-white/40 bg-black',
+        'crosshair-grid': 'flex flex-col border border-white/20 bg-black',
         'chamfer-notch':
-          'flex flex-col bg-white/35 p-px [clip-path:polygon(0_0,calc(100%-14px)_0,100%_14px,100%_100%,14px_100%,0_calc(100%-14px))]',
-        'hazard-telemetry': 'flex flex-col overflow-hidden border border-white/25 bg-black',
-        'pillar-monolith': 'flex flex-col border border-white/15 border-l-4 border-l-white bg-black',
-        'index-tab': 'flex flex-col border border-white/25 bg-black',
+          'flex flex-col bg-white/30 p-px [clip-path:polygon(0_0,calc(100%-14px)_0,100%_14px,100%_100%,14px_100%,0_calc(100%-14px))]',
+        'hazard-telemetry': 'flex flex-col overflow-hidden border border-white/20 bg-black',
+        'pillar-monolith': 'flex flex-col border border-white/15 border-l-2 border-l-white bg-black',
+        'index-tab': 'flex flex-col border border-white/20 bg-black',
       },
       size: {
         sm: 'w-full max-w-xs text-xs',
@@ -109,30 +110,30 @@ export const cardHeaderVariants = cva('relative z-10', {
   variants: {
     variant: {
       'ledger-bracket':
-        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/15 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
+        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/10 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'milled-chassis':
-        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/15 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
+        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/10 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'vertical-gutter':
-        'row-span-2 col-start-1 flex flex-col items-center justify-between gap-4 border-r border-white/25 bg-white/[0.02]',
+        'row-span-2 col-start-1 flex flex-col items-center justify-between gap-4 border-r border-white/15 bg-white/[0.02]',
       segmented:
-        'grid auto-rows-min items-start gap-x-4 gap-y-1 border border-white/20 bg-black has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
+        'grid auto-rows-min items-start gap-x-4 gap-y-1 border border-white/15 bg-black has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'shutter-split':
         'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white bg-white text-black has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'crosshair-grid':
-        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/25 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
+        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/15 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'chamfer-notch':
-        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/15 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
+        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/10 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'hazard-telemetry':
-        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/15 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
+        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-white/10 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'pillar-monolith':
         'grid auto-rows-min items-start gap-x-4 gap-y-1 pb-1 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
       'index-tab':
-        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-dashed border-white/20 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
+        'grid auto-rows-min items-start gap-x-4 gap-y-1 border-b border-dashed border-white/15 has-[[data-slot=card-action]]:grid-cols-[1fr_auto]',
     },
     size: {
-      sm: 'px-3.5 py-2.5',
-      default: 'px-4 py-3.5',
-      md: 'px-4 py-3.5',
+      sm: 'px-3 py-2',
+      default: 'px-4 py-3',
+      md: 'px-4 py-3',
       lg: 'px-5 py-4',
     },
   },
@@ -155,17 +156,17 @@ export const cardHeaderVariants = cva('relative z-10', {
     {
       variant: 'index-tab',
       size: 'sm',
-      className: 'pt-3.5',
+      className: 'pt-3',
     },
     {
       variant: 'index-tab',
       size: 'default',
-      className: 'pt-4',
+      className: 'pt-3.5',
     },
     {
       variant: 'index-tab',
       size: 'lg',
-      className: 'pt-5',
+      className: 'pt-4',
     },
   ],
   defaultVariants: {
@@ -182,13 +183,11 @@ export const cardTitleVariants = cva('font-montserrat font-bold tracking-tight l
       'vertical-gutter': 'text-white uppercase tracking-wider whitespace-nowrap',
       segmented: 'text-white uppercase tracking-wide',
       'shutter-split': 'text-black',
-      'crosshair-grid':
-        "text-white uppercase tracking-wider before:mr-1.5 before:font-mono before:text-white/45 before:content-['//']",
+      'crosshair-grid': 'text-white',
       'chamfer-notch': 'text-white uppercase tracking-wide',
-      'hazard-telemetry':
-        "flex items-center gap-2 text-white uppercase tracking-wide before:inline-block before:size-1.5 before:shrink-0 before:bg-white before:content-['']",
+      'hazard-telemetry': 'text-white uppercase tracking-wide',
       'pillar-monolith': 'text-white',
-      'index-tab': 'font-mono text-white uppercase tracking-tight',
+      'index-tab': 'font-mono text-white tracking-tight',
     },
     size: {
       sm: 'text-xs',
@@ -203,24 +202,24 @@ export const cardTitleVariants = cva('font-montserrat font-bold tracking-tight l
   },
 })
 
-export const cardDescriptionVariants = cva('font-mono leading-relaxed', {
+export const cardDescriptionVariants = cva('font-sans leading-normal', {
   variants: {
     variant: {
-      'ledger-bracket': 'text-white/55',
-      'milled-chassis': 'text-white/55',
+      'ledger-bracket': 'text-white/50',
+      'milled-chassis': 'text-white/50',
       'vertical-gutter': 'text-white/50 whitespace-nowrap',
-      segmented: 'text-white/55',
-      'shutter-split': 'text-black/65',
-      'crosshair-grid': 'text-white/55',
-      'chamfer-notch': 'text-white/55',
-      'hazard-telemetry': 'text-white/55',
-      'pillar-monolith': 'text-white/55',
-      'index-tab': 'text-white/55',
+      segmented: 'text-white/50',
+      'shutter-split': 'text-black/60',
+      'crosshair-grid': 'text-white/50',
+      'chamfer-notch': 'text-white/50',
+      'hazard-telemetry': 'text-white/50',
+      'pillar-monolith': 'text-white/50',
+      'index-tab': 'text-white/50',
     },
     size: {
-      sm: 'text-[10px]',
-      default: 'text-[11px]',
-      md: 'text-[11px]',
+      sm: 'text-[11px]',
+      default: 'text-xs',
+      md: 'text-xs',
       lg: 'text-xs',
     },
   },
@@ -258,13 +257,13 @@ export const cardActionVariants = cva('shrink-0', {
   },
 })
 
-export const cardContentVariants = cva('relative z-10 flex-1 leading-relaxed text-white/80', {
+export const cardContentVariants = cva('relative z-10 flex-1 leading-relaxed text-white/75', {
   variants: {
     variant: {
       'ledger-bracket': '',
       'milled-chassis': '',
       'vertical-gutter': 'col-start-2 row-start-1',
-      segmented: 'border border-white/15 bg-black',
+      segmented: 'border border-white/10 bg-black',
       'shutter-split': 'bg-black',
       'crosshair-grid': '',
       'chamfer-notch': '',
@@ -273,10 +272,10 @@ export const cardContentVariants = cva('relative z-10 flex-1 leading-relaxed tex
       'index-tab': '',
     },
     size: {
-      sm: 'px-3.5 py-3 text-[11px]',
-      default: 'px-4 py-4 text-xs',
-      md: 'px-4 py-4 text-xs',
-      lg: 'px-5 py-5 text-sm',
+      sm: 'px-3 py-2.5 text-xs',
+      default: 'px-4 py-3.5 text-xs',
+      md: 'px-4 py-3.5 text-xs',
+      lg: 'px-5 py-4 text-sm',
     },
   },
   defaultVariants: {
@@ -286,26 +285,26 @@ export const cardContentVariants = cva('relative z-10 flex-1 leading-relaxed tex
 })
 
 export const cardFooterVariants = cva(
-  'relative z-10 flex items-center justify-between gap-2 font-mono text-white/55',
+  'relative z-10 flex items-center justify-between gap-2 font-mono text-white/45',
   {
     variants: {
       variant: {
-        'ledger-bracket': 'border-t border-white/15',
-        'milled-chassis': 'border-t border-white/15 bg-black/60',
-        'vertical-gutter': 'col-start-2 row-start-2 border-t border-white/15',
-        segmented: 'border border-white/20 bg-black',
-        'shutter-split': 'border-t border-white/20 bg-white/[0.03]',
-        'crosshair-grid': 'border-t border-white/25 bg-white/[0.02] uppercase tracking-wider',
-        'chamfer-notch': 'border-t border-white/15',
-        'hazard-telemetry': 'border-t border-white/15 bg-white/[0.02] uppercase tracking-widest',
-        'pillar-monolith': 'border-t border-white/10 text-white/45',
-        'index-tab': 'border-t border-dashed border-white/20',
+        'ledger-bracket': 'border-t border-white/10',
+        'milled-chassis': 'border-t border-white/10 bg-black/40',
+        'vertical-gutter': 'col-start-2 row-start-2 border-t border-white/10',
+        segmented: 'border border-white/15 bg-black',
+        'shutter-split': 'border-t border-white/15 bg-white/[0.02]',
+        'crosshair-grid': 'border-t border-white/15 bg-white/[0.01]',
+        'chamfer-notch': 'border-t border-white/10',
+        'hazard-telemetry': 'border-t border-white/10 bg-white/[0.01]',
+        'pillar-monolith': 'border-t border-white/10 text-white/40',
+        'index-tab': 'border-t border-dashed border-white/15',
       },
       size: {
-        sm: 'px-3.5 py-2 text-[10px]',
-        default: 'px-4 py-2.5 text-[11px]',
-        md: 'px-4 py-2.5 text-[11px]',
-        lg: 'px-5 py-3 text-xs',
+        sm: 'px-3 py-1.5 text-[10px]',
+        default: 'px-4 py-2 text-[11px]',
+        md: 'px-4 py-2 text-[11px]',
+        lg: 'px-5 py-2.5 text-xs',
       },
     },
     defaultVariants: {
@@ -348,6 +347,7 @@ export const Card = forwardRef(function Card(
     className = '',
     variant = 'ledger-bracket',
     size = 'default',
+    modify = {},
     fullWidth = false,
     radius = 0,
     accent,
@@ -388,13 +388,21 @@ export const Card = forwardRef(function Card(
     resolvedVariant === 'milled-chassis' ? (
       <div
         data-slot="card-inner"
-        className="milled-card-inner relative z-10 flex flex-1 flex-col border border-white/15 bg-white/[0.02]"
+        style={modify.inset != null ? { padding: modify.inset } : undefined}
+        className="milled-card-inner relative z-10 flex flex-1 flex-col border border-white/10 bg-white/[0.01]"
       >
         {nodes}
       </div>
     ) : resolvedVariant === 'chamfer-notch' ? (
       <div
         data-slot="card-inner"
+        style={
+          modify.cut != null
+            ? {
+                clipPath: `polygon(0 0, calc(100% - ${modify.cut}px) 0, 100% ${modify.cut}px, 100% 100%, ${modify.cut}px 100%, 0 calc(100% - ${modify.cut}px))`,
+              }
+            : undefined
+        }
         className="relative z-10 flex flex-1 flex-col bg-black [clip-path:polygon(0_0,calc(100%-13.5px)_0,100%_13.5px,100%_100%,13.5px_100%,0_calc(100%-13.5px))]"
       >
         {nodes}
@@ -403,15 +411,33 @@ export const Card = forwardRef(function Card(
       nodes
     )
 
+  const bracketSize = modify.bracketSize ?? 8
+  const bracketThickness = modify.bracketThickness ?? 1.5
+  const bracketColor = modify.bracketColor ?? '#ffffff'
+  const pinSize = modify.pinSize ?? 3
+  const crosshairGlyph = modify.glyph ?? '+'
+  const tabWidth = modify.tabWidth ?? 44
+  const tabHeight = modify.tabHeight ?? 2
+  const tabAlign = modify.align ?? 'left'
+
   return (
     <HostProvider value={{ radius, accent }}>
-      <CardContext.Provider value={{ variant: resolvedVariant, size: resolvedSize }}>
+      <CardContext.Provider value={{ variant: resolvedVariant, size: resolvedSize, modify }}>
         <Comp
           ref={ref}
           data-slot="card"
           data-variant={resolvedVariant}
           data-size={resolvedSize}
-          style={{ borderRadius: radius, ...style }}
+          style={{
+            borderRadius: radius,
+            ...(resolvedVariant === 'pillar-monolith' && modify.spineWidth
+              ? { borderLeftWidth: `${modify.spineWidth}px` }
+              : {}),
+            ...(resolvedVariant === 'pillar-monolith' && modify.spineColor
+              ? { borderLeftColor: modify.spineColor }
+              : {}),
+            ...style,
+          }}
           className={cn(
             cardVariants({ variant: resolvedVariant, size: resolvedSize, fullWidth }),
             className
@@ -424,40 +450,72 @@ export const Card = forwardRef(function Card(
             <>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -top-px -left-px z-20 size-2.5 border-t-2 border-l-2 border-white"
+                style={{
+                  width: bracketSize,
+                  height: bracketSize,
+                  borderTopWidth: bracketThickness,
+                  borderLeftWidth: bracketThickness,
+                  borderColor: bracketColor,
+                }}
+                className="pointer-events-none absolute -top-px -left-px z-20 border-t border-l"
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -top-px -right-px z-20 size-2.5 border-t-2 border-r-2 border-white"
+                style={{
+                  width: bracketSize,
+                  height: bracketSize,
+                  borderTopWidth: bracketThickness,
+                  borderRightWidth: bracketThickness,
+                  borderColor: bracketColor,
+                }}
+                className="pointer-events-none absolute -top-px -right-px z-20 border-t border-r"
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -bottom-px -left-px z-20 size-2.5 border-b-2 border-l-2 border-white"
+                style={{
+                  width: bracketSize,
+                  height: bracketSize,
+                  borderBottomWidth: bracketThickness,
+                  borderLeftWidth: bracketThickness,
+                  borderColor: bracketColor,
+                }}
+                className="pointer-events-none absolute -bottom-px -left-px z-20 border-b border-l"
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-px -bottom-px z-20 size-2.5 border-r-2 border-b-2 border-white"
+                style={{
+                  width: bracketSize,
+                  height: bracketSize,
+                  borderRightWidth: bracketThickness,
+                  borderBottomWidth: bracketThickness,
+                  borderColor: bracketColor,
+                }}
+                className="pointer-events-none absolute -right-px -bottom-px z-20 border-r border-b"
               />
             </>
           )}
 
-          {resolvedVariant === 'milled-chassis' && (
+          {resolvedVariant === 'milled-chassis' && modify.pins !== false && (
             <>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute top-0.5 left-0.5 z-20 size-1 bg-white/45"
+                style={{ width: pinSize, height: pinSize }}
+                className="pointer-events-none absolute top-1 left-1 z-20 bg-white/40"
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute top-0.5 right-0.5 z-20 size-1 bg-white/45"
+                style={{ width: pinSize, height: pinSize }}
+                className="pointer-events-none absolute top-1 right-1 z-20 bg-white/40"
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute bottom-0.5 left-0.5 z-20 size-1 bg-white/45"
+                style={{ width: pinSize, height: pinSize }}
+                className="pointer-events-none absolute bottom-1 left-1 z-20 bg-white/40"
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute right-0.5 bottom-0.5 z-20 size-1 bg-white/45"
+                style={{ width: pinSize, height: pinSize }}
+                className="pointer-events-none absolute right-1 bottom-1 z-20 bg-white/40"
               />
             </>
           )}
@@ -466,27 +524,27 @@ export const Card = forwardRef(function Card(
             <>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -top-1.5 -left-1 z-20 font-mono text-[11px] leading-none text-white select-none"
+                className="pointer-events-none absolute -top-2 -left-1.5 z-20 font-mono text-[11px] leading-none text-white/70 select-none"
               >
-                +
+                {crosshairGlyph}
               </span>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -top-1.5 -right-1 z-20 font-mono text-[11px] leading-none text-white select-none"
+                className="pointer-events-none absolute -top-2 -right-1.5 z-20 font-mono text-[11px] leading-none text-white/70 select-none"
               >
-                +
+                {crosshairGlyph}
               </span>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -bottom-1.5 -left-1 z-20 font-mono text-[11px] leading-none text-white select-none"
+                className="pointer-events-none absolute -bottom-2 -left-1.5 z-20 font-mono text-[11px] leading-none text-white/70 select-none"
               >
-                +
+                {crosshairGlyph}
               </span>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-1 -bottom-1.5 z-20 font-mono text-[11px] leading-none text-white select-none"
+                className="pointer-events-none absolute -right-1.5 -bottom-2 z-20 font-mono text-[11px] leading-none text-white/70 select-none"
               >
-                +
+                {crosshairGlyph}
               </span>
             </>
           )}
@@ -494,25 +552,27 @@ export const Card = forwardRef(function Card(
           {resolvedVariant === 'hazard-telemetry' && (
             <div
               aria-hidden="true"
-              className="pointer-events-none relative z-10 h-1.5 w-full shrink-0 border-b border-white/20"
               style={{
+                height: `${modify.stripeHeight ?? 3}px`,
                 backgroundImage:
-                  'repeating-linear-gradient(-45deg, rgba(255,255,255,0.75) 0px, rgba(255,255,255,0.75) 4px, transparent 4px, transparent 8px)',
+                  'repeating-linear-gradient(-45deg, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0.7) 3px, transparent 3px, transparent 6px)',
               }}
+              className="pointer-events-none relative z-10 w-full shrink-0 border-b border-white/10"
             />
           )}
 
           {resolvedVariant === 'index-tab' && (
-            <>
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute top-0 left-0 z-20 h-1 w-14 bg-white"
-              />
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute top-0 right-3 z-20 h-1 w-2 bg-white/40"
-              />
-            </>
+            <span
+              aria-hidden="true"
+              style={{
+                width: `${tabWidth}px`,
+                height: `${tabHeight}px`,
+                left: tabAlign === 'center' ? '50%' : tabAlign === 'right' ? undefined : '-1px',
+                right: tabAlign === 'right' ? '-1px' : undefined,
+                transform: tabAlign === 'center' ? 'translateX(-50%)' : undefined,
+              }}
+              className="pointer-events-none absolute -top-px z-20 bg-white"
+            />
           )}
 
           {asChild && slottedElement ? (

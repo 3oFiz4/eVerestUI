@@ -940,64 +940,64 @@ export default function App() {
               <Section
                 id="card-variants"
                 title="10 Structural Variants"
-                note="5 foundational templates (Ledger Bracket, Milled Chassis, Vertical Gutter, Segmented, Shutter Split) + 5 monolithic FUI/editorial architectures (Crosshair Grid, Chamfer Notch, Hazard Telemetry, Pillar Monolith, Index Tab)."
+                note="Clean architectural card layouts with Gestalt proximity, quiet hierarchy, and configurable variant modifiers."
               >
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {[
                     [
                       "ledger-bracket",
                       "01 // Ledger Bracket",
-                      "L-bracket corner reticles + crisp 1px ledger rules",
+                      "Corner reticles with ledger rules",
                     ],
                     [
                       "milled-chassis",
                       "02 // Milled Chassis",
-                      "Double-walled CNC perimeter + recessed inner chamber",
+                      "Double-walled perimeter with recessed bay",
                     ],
                     [
                       "vertical-gutter",
                       "03 // Vertical Gutter",
-                      "Left spine with rotated vertical CardTitle & top action",
+                      "Left spine with rotated vertical title and action",
                     ],
                     [
                       "segmented",
                       "04 // Segmented Cockpit",
-                      "Discrete 1px-bordered modular cells in recessed rack",
+                      "Compartmentalized modular cells in rack",
                     ],
                     [
                       "shutter-split",
                       "05 // Shutter Split",
-                      "Inverted solid-white header shutter over pitch-black body",
+                      "Inverted header shutter over dark body",
                     ],
                     [
                       "crosshair-grid",
                       "06 // Crosshair Grid",
-                      "Exposed hairline grid + intersection '+' corner glyphs",
+                      "Hairline frame with corner crosshair ticks",
                     ],
                     [
                       "chamfer-notch",
                       "07 // Chamfer Notch",
-                      "45-degree beveled diagonal corners with 1px polygon shell",
+                      "Beveled corners with 1px geometric shell",
                     ],
                     [
                       "hazard-telemetry",
                       "08 // Hazard Telemetry",
-                      "Top -45deg diagonal scanline hazard bar + datum square",
+                      "Top diagonal hazard scanline accent",
                     ],
                     [
                       "pillar-monolith",
                       "09 // Pillar Monolith",
-                      "Heavy 4px left solid-white structural spine + open bay",
+                      "Solid white structural left spine",
                     ],
                     [
                       "index-tab",
                       "10 // Index Tab",
-                      "Top-docked solid dossier register tab + dashed rules",
+                      "Flush monochrome dossier index tab",
                     ],
                   ].map(([variant, title, desc]) => (
                     <div key={variant} className="space-y-2">
                       <div className="font-mono text-[11px] text-white/50">
-                        {title} — <span className="text-white/80">{variant}</span>
+                        {title}
                       </div>
                       <Card variant={variant} size="default" fullWidth>
                         <CardHeader>
@@ -1010,16 +1010,15 @@ export default function App() {
                               size={variant === "vertical-gutter" ? "icon-xs" : "xs"}
                               variant="outline"
                             >
-                              {variant === "vertical-gutter" ? "▲" : "Card Action"}
+                              {variant === "vertical-gutter" ? "▲" : "Action"}
                             </Button>
                           </CardAction>
                         </CardHeader>
                         <CardContent>
-                          Card Content paragraph text describing the main payload and component details.
+                          Card content describing component details and properties.
                         </CardContent>
                         <CardFooter>
-                          <span>Card Footer text</span>
-                          <span>SYS // OK</span>
+                          <span>Card Footer</span>
                         </CardFooter>
                       </Card>
                     </div>
@@ -1045,11 +1044,10 @@ export default function App() {
                         </CardAction>
                       </CardHeader>
                       <CardContent>
-                        Card Content paragraph text describing the main payload and component details.
+                        Card content describing component details and properties.
                       </CardContent>
                       <CardFooter>
                         <span>Card Footer</span>
-                        <span>SIZE={sz.toUpperCase()}</span>
                       </CardFooter>
                     </Card>
                   ))}
@@ -1070,7 +1068,7 @@ export default function App() {
                     />
                     <CardHeader>
                       <CardTitle>Snake + Grid Track</CardTitle>
-                      <CardDescription>Ledger Bracket + Overlay</CardDescription>
+                      <CardDescription>Ledger Bracket with Overlay</CardDescription>
                       <CardAction>
                         <Button size="xs" variant="outline">
                           Inspect
@@ -1081,8 +1079,7 @@ export default function App() {
                       Hover across the card surface to track the cursor lattice while the perimeter snake orbits.
                     </CardContent>
                     <CardFooter>
-                      <span>LAYER: BORDER+INNER</span>
-                      <span>ACTIVE</span>
+                      <span>Card Footer</span>
                     </CardFooter>
                   </Card>
 
@@ -1105,8 +1102,7 @@ export default function App() {
                       Click anywhere on the card to trigger a ballistic shockwave across the halftone matrix.
                     </CardContent>
                     <CardFooter>
-                      <span>GUTTER // 03</span>
-                      <span>READY</span>
+                      <span>Card Footer</span>
                     </CardFooter>
                   </Card>
                 </div>
@@ -1121,9 +1117,9 @@ export default function App() {
     </CardAction>
   </CardHeader>
   <CardContent>
-    Card Content paragraph text describing the main payload and component details.
+    Card content describing component details and properties.
   </CardContent>
-  <CardFooter>Card Footer text</CardFooter>
+  <CardFooter>Card Footer</CardFooter>
 </Card>`}</Code>
                 </div>
               </Section>
