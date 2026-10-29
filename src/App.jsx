@@ -209,10 +209,13 @@ export default function App() {
             <>
               <header className="space-y-3">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
-                  Badge
+                  Badge (not finished yet)
                 </h1>
                 <p className="max-w-3xl text-sm text-white/70 leading-relaxed">
                   Status telemetry and metadata badges built on Gestalt grouping and typographic hierarchy. Badges do not resemble clickable buttons — they provide instant visual status recognition without adding interactive cognitive load.
+                </p>
+                <p className="font-mono text-xs text-sky-400">
+                  TODO: 1. Add implementation code block; 2. Fix paralelogram and variants;
                 </p>
               </header>
 
