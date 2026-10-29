@@ -409,7 +409,7 @@ export function Input({
     )
   }
 
-  // `simple` (default — no focus animation, clean monochrome border + 5% outer-grid overlay)
+  // `simple` (default — no focus animation, clean monochrome border)
   return (
     <div
       data-slot="input"
@@ -417,7 +417,6 @@ export function Input({
       style={{ borderRadius: radius, ...style }}
       className={`relative inline-flex items-center bg-black ${widthClass} ${containerClassName}`}
     >
-      {gridNode}
       <input
         type={type}
         disabled={disabled}
