@@ -31,7 +31,10 @@ export class AnimationBase {
     // Unknown option keys are silently dropped by the spread above, which makes a
     // typo (or a renamed parameter) look like the effect simply ignoring you. Warn
     // in dev so it surfaces immediately instead.
-    if (import.meta.env?.DEV) {
+    const isDev =
+      (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') ||
+      Boolean(import.meta.env?.DEV)
+    if (isDev) {
       const known = new Set([...Object.keys(this.constructor.defaults), 'radius', 'inset', 'state'])
       for (const key of Object.keys(options)) {
         if (!known.has(key)) {

@@ -1,8 +1,29 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "oxc"],
+  "ignorePatterns": ["dist/**"],
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+    "react/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true,
+        "allowExportNames": [
+          "buttonVariants",
+          "BUTTON_VARIANTS",
+          "BUTTON_SIZES",
+          "variantAccent",
+          "buttonGroupVariants",
+          "buttonGroupSeparatorVariants",
+          "BUTTON_GROUP_ORIENTATIONS",
+          "BUTTON_GROUP_VARIANTS",
+          "inputVariants",
+          "inputContainerVariants",
+          "INPUT_SIZES",
+          "INPUT_VARIANTS",
+          "cardVariants"
+        ]
+      }
+    ]
   }
 }

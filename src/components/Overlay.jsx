@@ -1,11 +1,24 @@
-import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
+'use client'
+
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { Slot } from '@radix-ui/react-slot'
+import { cn } from '../lib/utils.js'
 import { useHost } from './context.js'
 import { createEngine } from './overlay/engine.js'
 import { resolveEffects } from './overlay/registry.js'
 
 function getHostElement(box) {
   if (!box) return null
-  const btn = box.closest('button')
+  const btn = box.closest('[data-slot="button"], button, a')
   if (btn) return btn
   let el = box.parentElement
   while (el && el !== document.body && window.getComputedStyle(el).display === 'inline') {
@@ -43,28 +56,32 @@ function isChromatic(cssColor) {
  * Border effects draw outside the box (halos, rays) and are given
  * `borderOverflow` px of room; inner effects are clipped to the silhouette.
  */
-export function Overlay({
-  className = '',
-  variant, // legacy: sets staticOverlayAnimVar
-  count, // legacy: merged into staticOverlayAnimVarModify
-  staticBorderAnimVar,
-  staticBorderAnimVarModify,
-  staticOverlayAnimVar,
-  staticOverlayAnimVarModify,
-  hoverBorderAnimVar,
-  hoverBorderAnimVarModify,
-  hoverOverlayAnimVar,
-  hoverOverlayAnimVarModify,
-  activeBorderAnimVar,
-  activeBorderAnimVarModify,
-  activeOverlayAnimVar,
-  activeOverlayAnimVarModify,
-  radius,
-  accent,
-  borderOverflow = 40,
-  followPointer = true,
-  ref,
-}) {
+export const Overlay = forwardRef(function Overlay(
+  {
+    asChild = false,
+    className = '',
+    variant, // legacy: sets staticOverlayAnimVar
+    count, // legacy: merged into staticOverlayAnimVarModify
+    staticBorderAnimVar,
+    staticBorderAnimVarModify,
+    staticOverlayAnimVar,
+    staticOverlayAnimVarModify,
+    hoverBorderAnimVar,
+    hoverBorderAnimVarModify,
+    hoverOverlayAnimVar,
+    hoverOverlayAnimVarModify,
+    activeBorderAnimVar,
+    activeBorderAnimVarModify,
+    activeOverlayAnimVar,
+    activeOverlayAnimVarModify,
+    radius,
+    accent,
+    borderOverflow = 40,
+    followPointer = true,
+    ...props
+  },
+  ref
+) {
   const hostContext = useHost()
   const boxRef = useRef(null)
   const borderRef = useRef(null)
@@ -287,10 +304,26 @@ export function Overlay({
     }
   }, [followPointer, sendPointer, sendState])
 
-  useImperativeHandle(ref, () => ({ setState: sendState, setPointer: sendPointer }), [sendPointer, sendState])
+  useImperativeHandle(
+    ref,
+    () => ({
+      element: boxRef.current,
+      setState: sendState,
+      setPointer: sendPointer,
+    }),
+    [sendPointer, sendState]
+  )
+
+  const Comp = asChild ? Slot : 'div'
 
   return (
-    <div ref={boxRef} className={`pointer-events-none absolute inset-0 ${className}`} aria-hidden="true">
+    <Comp
+      ref={boxRef}
+      data-slot="overlay"
+      className={cn('pointer-events-none absolute inset-0', className)}
+      aria-hidden="true"
+      {...props}
+    >
       <div
         ref={borderRef}
         className="absolute z-0"
@@ -301,8 +334,10 @@ export function Overlay({
         className="absolute inset-0 overflow-hidden"
         style={{ borderRadius: resolvedRadius ? `${resolvedRadius}px` : undefined }}
       />
-    </div>
+    </Comp>
   )
-}
+})
+
+Overlay.displayName = 'Overlay'
 
 export default Overlay

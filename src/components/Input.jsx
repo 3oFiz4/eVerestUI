@@ -1,3 +1,10 @@
+'use client'
+
+import { forwardRef } from 'react'
+import { Slot } from '@radix-ui/react-slot'
+import { cva } from 'class-variance-authority'
+import { cn } from '../lib/utils.js'
+
 /**
  * Sharp-cornered, monochrome Input component matching Button's exact size scale.
  *
@@ -75,49 +82,119 @@ export const INPUT_VARIANTS = [
   'split-shutter',
 ]
 
-export function Input({
-  className = '',
-  containerClassName = '',
-  variant = 'simple',
-  size = 'default',
-  fontSize,
-  radius = 0,
-  fullWidth = false,
-  label,
-  placeholder,
-  disabled = false,
-  type = 'text',
-  style,
-  ...props
-}) {
+export const inputContainerVariants = cva('relative inline-flex bg-black', {
+  variants: {
+    variant: {
+      simple: 'items-center',
+      'floating-label': 'items-center',
+      crosshair: 'items-center',
+      'underline-beam': 'flex-col',
+      shutter: 'items-center overflow-hidden border border-white/30',
+      'ghost-notch': 'items-center border border-white/25',
+      'perimeter-trace': 'items-center border border-white/15',
+      'scanline-sweep': 'items-center overflow-hidden border border-white/25',
+      'pillar-clamp': 'items-center border border-white/20',
+      'chamfer-lock': 'items-center border border-white/20',
+      'sonar-pulse': 'items-center',
+      'split-shutter': 'items-center overflow-hidden border border-white/30',
+    },
+    fullWidth: {
+      true: 'w-full',
+      false: 'w-48',
+    },
+  },
+  defaultVariants: {
+    variant: 'simple',
+    fullWidth: false,
+  },
+})
+
+export const inputVariants = cva(
+  'peer relative z-10 w-full bg-transparent font-mono text-white focus:outline-none disabled:cursor-not-allowed disabled:opacity-40',
+  {
+    variants: {
+      variant: {
+        simple: 'placeholder:text-white/35 border border-white/25 transition-colors duration-150 focus:border-white',
+        'floating-label':
+          'border border-white/30 placeholder:text-transparent focus:border-white focus:placeholder:text-white/35 transition-colors duration-150',
+        crosshair:
+          'placeholder:text-white/35 border border-white/20 transition-colors duration-150 focus:border-white/60',
+        'underline-beam': 'placeholder:text-white/35 border-b border-white/20',
+        shutter:
+          'placeholder:text-white/35 transition-colors duration-200 selection:bg-black selection:text-white focus:text-black focus:placeholder:text-black/50',
+        'ghost-notch': 'placeholder:text-white/35',
+        'perimeter-trace': 'placeholder:text-white/35',
+        'scanline-sweep': 'placeholder:text-white/35 transition-colors duration-150 focus:border-white',
+        'pillar-clamp': 'placeholder:text-white/35 transition-colors duration-150 focus:border-white/50',
+        'chamfer-lock': 'placeholder:text-white/35 transition-colors duration-150 focus:border-white',
+        'sonar-pulse':
+          'placeholder:text-white/35 border border-white/25 transition-colors duration-150 focus:border-white',
+        'split-shutter':
+          'placeholder:text-white/35 transition-colors duration-150 selection:bg-black selection:text-white focus:text-black focus:placeholder:text-black/50',
+      },
+      size: SIZES,
+    },
+    defaultVariants: {
+      variant: 'simple',
+      size: 'default',
+    },
+  }
+)
+
+export const Input = forwardRef(function Input(
+  {
+    asChild = false,
+    className = '',
+    containerClassName = '',
+    variant = 'simple',
+    size = 'default',
+    fontSize,
+    radius = 0,
+    fullWidth = false,
+    label,
+    placeholder,
+    disabled = false,
+    type = 'text',
+    style,
+    ...props
+  },
+  ref
+) {
   const mode = INPUT_VARIANTS.includes(variant) ? variant : 'simple'
   const resolvedSize = resolveInputSize({ size, fontSize, className })
-  const s = SIZES[resolvedSize] ?? SIZES.default
-  const widthClass = fullWidth ? 'w-full' : 'w-48'
+  const Comp = asChild ? Slot : 'input'
 
-  const coreInput = `peer relative z-10 w-full bg-transparent font-mono text-white focus:outline-none disabled:cursor-not-allowed disabled:opacity-40 ${s} ${className}`
-  const baseInput = `${coreInput} placeholder:text-white/35`
+  const containerCls = cn(
+    inputContainerVariants({ variant: mode, fullWidth }),
+    mode === 'floating-label' && disabled && 'cursor-not-allowed opacity-40',
+    containerClassName
+  )
+  const inputCls = cn(inputVariants({ variant: mode, size: resolvedSize }), className)
+  const needsInnerRadius =
+    mode === 'simple' || mode === 'floating-label' || mode === 'crosshair' || mode === 'sonar-pulse'
+
+  const controlNode = (
+    <Comp
+      ref={ref}
+      type={asChild ? undefined : type}
+      disabled={disabled}
+      placeholder={mode === 'floating-label' ? (placeholder ?? 'https://...') : placeholder}
+      style={needsInnerRadius ? { borderRadius: radius } : undefined}
+      className={inputCls}
+      {...props}
+    />
+  )
 
   if (mode === 'floating-label') {
     const floatLabel = label ?? 'Endpoint'
-    const activePlaceholder = placeholder ?? 'https://...'
     return (
       <div
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center bg-black ${widthClass} ${
-          disabled ? 'opacity-40 cursor-not-allowed' : ''
-        } ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={activePlaceholder}
-          style={{ borderRadius: radius }}
-          className={`${coreInput} border border-white/30 placeholder:text-transparent focus:border-white focus:placeholder:text-white/35 transition-colors duration-150`}
-          {...props}
-        />
+        {controlNode}
         <label className="pointer-events-none absolute left-2.5 top-1/2 z-20 -translate-y-1/2 origin-left font-mono text-[11px] leading-none text-white/50 transition-all duration-200 ease-out peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:scale-75 peer-focus:bg-black peer-focus:px-1 peer-focus:text-white peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-1/2 peer-not-placeholder-shown:scale-75 peer-not-placeholder-shown:bg-black peer-not-placeholder-shown:px-1 peer-not-placeholder-shown:text-white/80">
           {floatLabel}
         </label>
@@ -131,16 +208,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          style={{ borderRadius: radius }}
-          className={`${baseInput} border border-white/20 transition-colors duration-150 focus:border-white/60`}
-          {...props}
-        />
+        {controlNode}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute -top-1 -left-1 z-20 size-2 border-t-2 border-l-2 border-white/35 transition-all duration-200 ease-out peer-focus:-translate-x-0.5 peer-focus:-translate-y-0.5 peer-focus:border-white"
@@ -167,15 +237,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex flex-col bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={`${baseInput} border-b border-white/20`}
-          {...props}
-        />
+        {controlNode}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute bottom-0 left-1/2 z-20 h-[2px] w-0 -translate-x-1/2 bg-white transition-all duration-300 ease-out peer-focus:w-full"
@@ -190,15 +254,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center overflow-hidden border border-white/30 bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={`${baseInput} transition-colors duration-200 selection:bg-black selection:text-white focus:text-black focus:placeholder:text-black/50`}
-          {...props}
-        />
+        {controlNode}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 origin-left scale-x-0 bg-white transition-transform duration-300 ease-out will-change-transform peer-focus:scale-x-100"
@@ -213,15 +271,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center border border-white/25 bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={baseInput}
-          {...props}
-        />
+        {controlNode}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-20 border border-transparent transition-all duration-200 ease-out peer-focus:inset-[3px] peer-focus:border-white"
@@ -236,15 +288,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center border border-white/15 bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={baseInput}
-          {...props}
-        />
+        {controlNode}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute top-0 left-0 z-20 h-px w-full origin-left scale-x-0 bg-white transition-transform duration-150 ease-out will-change-transform peer-focus:scale-x-100"
@@ -271,15 +317,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center overflow-hidden border border-white/25 bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={`${baseInput} transition-colors duration-150 focus:border-white`}
-          {...props}
-        />
+        {controlNode}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-200 peer-focus:opacity-100"
@@ -302,15 +342,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center border border-white/20 bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={`${baseInput} transition-colors duration-150 focus:border-white/50`}
-          {...props}
-        />
+        {controlNode}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 left-0 z-20 w-1 origin-center scale-y-0 bg-white transition-transform duration-200 ease-out will-change-transform peer-focus:scale-y-100"
@@ -329,15 +363,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center border border-white/20 bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={`${baseInput} transition-colors duration-150 focus:border-white`}
-          {...props}
-        />
+        {controlNode}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute top-0 left-1/2 z-20 h-1 w-px -translate-x-1/2 scale-y-0 bg-white transition-transform duration-200 ease-out peer-focus:scale-y-100"
@@ -364,16 +392,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          style={{ borderRadius: radius }}
-          className={`${baseInput} border border-white/25 transition-colors duration-150 focus:border-white`}
-          {...props}
-        />
+        {controlNode}
         <span
           aria-hidden="true"
           style={{ borderRadius: radius }}
@@ -389,15 +410,9 @@ export function Input({
         data-slot="input"
         data-variant={mode}
         style={{ borderRadius: radius, ...style }}
-        className={`relative inline-flex items-center overflow-hidden border border-white/30 bg-black ${widthClass} ${containerClassName}`}
+        className={containerCls}
       >
-        <input
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={`${baseInput} transition-colors duration-150 selection:bg-black selection:text-white focus:text-black focus:placeholder:text-black/50`}
-          {...props}
-        />
+        {controlNode}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 z-0 h-1/2 origin-top scale-y-0 bg-white transition-transform duration-200 ease-out will-change-transform peer-focus:scale-y-100"
@@ -416,18 +431,13 @@ export function Input({
       data-slot="input"
       data-variant="simple"
       style={{ borderRadius: radius, ...style }}
-      className={`relative inline-flex items-center bg-black ${widthClass} ${containerClassName}`}
+      className={containerCls}
     >
-      <input
-        type={type}
-        disabled={disabled}
-        placeholder={placeholder}
-        style={{ borderRadius: radius }}
-        className={`${baseInput} border border-white/25 transition-colors duration-150 focus:border-white`}
-        {...props}
-      />
+      {controlNode}
     </div>
   )
-}
+})
+
+Input.displayName = 'Input'
 
 export default Input

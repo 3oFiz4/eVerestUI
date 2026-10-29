@@ -1,4 +1,9 @@
-import { Children, cloneElement, isValidElement } from 'react'
+'use client'
+
+import { Children, cloneElement, forwardRef, isValidElement } from 'react'
+import { Slot, Slottable } from '@radix-ui/react-slot'
+import { cva } from 'class-variance-authority'
+import { cn } from '../lib/utils.js'
 import { HostProvider } from './context.js'
 import { Overlay } from './Overlay.jsx'
 
@@ -99,18 +104,18 @@ const VARIANTS = {
 }
 
 const SIZES = {
-  xs: 'h-4 px-2.5 text-[10px] gap-1',
-  sm: 'h-5 px-2.5 text-[11px] gap-1',
-  default: 'h-6 px-2.5 text-[12px] text-xs gap-1.5',
-  md: 'h-6 px-2.5 text-[12px] text-xs gap-1.5',
-  lg: 'h-7 px-2.5 text-[12px] text-xs gap-1.5',
-  xl: 'h-8 px-2.5 text-[12px] text-xs gap-1.5',
-  '2xl': 'h-9 px-2.5 text-sm gap-2',
-  icon: 'size-6 p-0 text-[12px] gap-0',
-  'icon-xs': 'size-4 p-0 text-[10px] gap-0',
-  'icon-sm': 'size-5 p-0 text-[11px] gap-0',
-  'icon-lg': 'size-7 p-0 text-[12px] gap-0',
-  'icon-xl': 'size-8 p-0 text-[12px] gap-0',
+  xs: 'h-4 px-2.5 text-[10px] leading-none gap-1',
+  sm: 'h-5 px-2.5 text-[11px] leading-none gap-1',
+  default: 'h-6 px-2.5 text-xs leading-none gap-1.5',
+  md: 'h-6 px-2.5 text-xs leading-none gap-1.5',
+  lg: 'h-7 px-2.5 text-xs leading-none gap-1.5',
+  xl: 'h-8 px-2.5 text-xs leading-none gap-1.5',
+  '2xl': 'h-9 px-2.5 text-sm leading-none gap-2',
+  icon: 'size-6 p-0 text-xs leading-none gap-0',
+  'icon-xs': 'size-4 p-0 text-[10px] leading-none gap-0',
+  'icon-sm': 'size-5 p-0 text-[11px] leading-none gap-0',
+  'icon-lg': 'size-7 p-0 text-xs leading-none gap-0',
+  'icon-xl': 'size-8 p-0 text-xs leading-none gap-0',
 }
 
 /**
@@ -140,38 +145,102 @@ function resolveButtonSize({ size, fontSize, className }) {
   return size ?? 'default'
 }
 
+export const buttonVariants = cva(
+  [
+    'group/button font-montserrat font-bold font-[700] relative isolate inline-flex shrink-0 cursor-pointer items-center justify-center tracking-tight whitespace-nowrap select-none leading-none outline-none',
+    'transition-all duration-150 ease-out',
+    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black',
+    'enabled:active:translate-y-px active:not-aria-[haspopup]:translate-y-px',
+    'disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black disabled:pointer-events-none',
+    '[&_svg]:pointer-events-none',
+    'has-[[data-icon=inline-end]]:pr-2 has-[[data-icon=inline-start]]:pl-2',
+  ],
+  {
+    variants: {
+      variant: {
+        default: VARIANTS.default.base,
+        primary: VARIANTS.primary.base,
+        outline: VARIANTS.outline.base,
+        secondary: VARIANTS.secondary.base,
+        ghost: VARIANTS.ghost.base,
+        link: VARIANTS.link.base,
+        destructive: VARIANTS.destructive.base,
+        subtle: VARIANTS.subtle.base,
+        neutral: VARIANTS.neutral.base,
+        dashed: VARIANTS.dashed.base,
+        double: VARIANTS.double.base,
+        success: VARIANTS.success.base,
+        caution: VARIANTS.caution.base,
+        warning: VARIANTS.warning.base,
+        danger: VARIANTS.danger.base,
+        info: VARIANTS.info.base,
+      },
+      size: SIZES,
+      fullWidth: {
+        true: 'w-full',
+        false: '',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+      fullWidth: false,
+    },
+  }
+)
+
 export const BUTTON_VARIANTS = Object.keys(VARIANTS)
 export const BUTTON_SIZES = ['xs', 'sm', 'default', 'md', 'lg', 'xl', 'icon']
 
 /** Accent colour a variant contributes to overlay effects. */
 export const variantAccent = (variant) => (VARIANTS[variant] ?? VARIANTS.default).accent
 
-export function Button({
-  children,
-  className = '',
-  variant = 'default',
-  size = 'default',
-  fontSize,
-  radius = 0,
-  color,
-  ripple = true,
-  disabled = false,
-  loading = false,
-  fullWidth = false,
-  icon,
-  iconPosition = 'inline-start',
-  style,
-  ...props
-}) {
+function isOverlayElement(child) {
+  return (
+    isValidElement(child) &&
+    (child.props?.staticBorderAnimVar !== undefined ||
+      child.props?.hoverBorderAnimVar !== undefined ||
+      child.props?.activeBorderAnimVar !== undefined ||
+      child.props?.staticOverlayAnimVar !== undefined ||
+      child.props?.hoverOverlayAnimVar !== undefined ||
+      child.props?.activeOverlayAnimVar !== undefined ||
+      child.props?.borderOverflow !== undefined ||
+      child.type === Overlay ||
+      child.type?.name === 'Overlay' ||
+      child.type?.displayName === 'Overlay')
+  )
+}
+
+export const Button = forwardRef(function Button(
+  {
+    asChild = false,
+    children,
+    className = '',
+    variant = 'default',
+    size = 'default',
+    fontSize,
+    radius = 0,
+    color,
+    ripple = true,
+    disabled = false,
+    loading = false,
+    fullWidth = false,
+    icon,
+    iconPosition = 'inline-start',
+    style,
+    ...props
+  },
+  ref
+) {
   const v = VARIANTS[variant] ?? VARIANTS.default
   const resolvedSize = resolveButtonSize({ size, fontSize, className })
-  const s = SIZES[resolvedSize] ?? SIZES.default
   const isTiny = resolvedSize === 'xs' || resolvedSize === 'icon-xs'
   const isSmall = resolvedSize === 'sm' || resolvedSize === 'icon-sm'
   const customColor = color || style?.color || style?.borderColor || style?.backgroundColor
   const accent = customColor || v.accent
   const rippleColor = customColor || v.ripple || v.accent
-  const host = { radius, accent, rippleColor, customColor, disabled: disabled || loading }
+  const isDisabled = disabled || loading
+  const host = { radius, accent, rippleColor, customColor, disabled: isDisabled }
 
   let startIcon = null
   let endIcon = null
@@ -190,29 +259,41 @@ export function Button({
     }
   }
 
-  // Separate Overlay elements from text/content so Overlay renders as a direct child of <button>
+  // Separate Overlay elements from text/content so Overlay renders as a direct child of <button> (or slotted host)
   const overlays = []
   const content = []
+  let slottedElement = null
 
-  Children.forEach(children, (child) => {
-    if (
-      isValidElement(child) &&
-      (child.props?.staticBorderAnimVar !== undefined ||
-        child.props?.hoverBorderAnimVar !== undefined ||
-        child.props?.activeBorderAnimVar !== undefined ||
-        child.props?.staticOverlayAnimVar !== undefined ||
-        child.props?.hoverOverlayAnimVar !== undefined ||
-        child.props?.activeOverlayAnimVar !== undefined ||
-        child.props?.borderOverflow !== undefined ||
-        child.type === Overlay ||
-        child.type?.name === 'Overlay' ||
-        child.type?.displayName === 'Overlay')
-    ) {
-      overlays.push(child)
-    } else {
-      content.push(child)
+  if (asChild) {
+    Children.forEach(children, (child) => {
+      if (isOverlayElement(child)) {
+        overlays.push(child)
+      } else if (!slottedElement && isValidElement(child)) {
+        slottedElement = child
+      } else {
+        content.push(child)
+      }
+    })
+    if (slottedElement) {
+      const innerNodes = []
+      Children.forEach(slottedElement.props?.children, (nested) => {
+        if (isOverlayElement(nested)) {
+          overlays.push(nested)
+        } else {
+          innerNodes.push(nested)
+        }
+      })
+      slottedElement = cloneElement(slottedElement, undefined, ...innerNodes, ...content)
     }
-  })
+  } else {
+    Children.forEach(children, (child) => {
+      if (isOverlayElement(child)) {
+        overlays.push(child)
+      } else {
+        content.push(child)
+      }
+    })
+  }
 
   if (ripple) {
     if (overlays.length === 0) {
@@ -234,49 +315,69 @@ export function Button({
     }
   }
 
+  const labelClassName = cn(
+    "relative z-10 inline-flex items-center gap-[inherit] [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+    variant === 'link' &&
+      'after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200 after:ease-out group-hover/button:after:scale-x-100 group-focus-visible/button:after:scale-x-100'
+  )
+
+  const spinnerNode = loading ? (
+    <span
+      className={cn(
+        isTiny ? 'size-2' : isSmall ? 'size-2.5' : 'size-3',
+        'animate-spin rounded-full border border-current border-t-transparent'
+      )}
+      aria-hidden="true"
+    />
+  ) : null
+
+  const Comp = asChild ? Slot : 'button'
+
   return (
     <HostProvider value={host}>
-      <button
-        type="button"
+      <Comp
+        ref={ref}
+        type={asChild ? undefined : 'button'}
         data-slot="button"
-        disabled={disabled || loading}
+        disabled={asChild ? undefined : isDisabled}
+        aria-disabled={asChild && isDisabled ? true : undefined}
         aria-busy={loading || undefined}
         style={{
           borderRadius: radius,
           ...(color ? { color, borderColor: color } : {}),
           ...style,
         }}
-        className={`group/button font-montserrat font-bold font-[700] relative isolate inline-flex shrink-0 cursor-pointer items-center justify-center tracking-tight whitespace-nowrap select-none leading-none outline-none
-          transition-all duration-150 ease-out
-          focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black
-          enabled:active:translate-y-px active:not-aria-[haspopup]:translate-y-px
-          disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black disabled:pointer-events-none
-          [&_svg]:pointer-events-none
-          has-[[data-icon=inline-end]]:pr-2 has-[[data-icon=inline-start]]:pl-2
-          ${v.base} ${s} ${fullWidth ? 'w-full' : ''} ${className}`}
+        className={cn(
+          buttonVariants({ variant, size: resolvedSize, fullWidth }),
+          isDisabled && asChild && 'pointer-events-none cursor-not-allowed opacity-40',
+          className
+        )}
         {...props}
       >
         {overlays}
-        {loading && (
-          <span
-            className={`${isTiny ? 'size-2' : isSmall ? 'size-2.5' : 'size-3'} animate-spin rounded-full border border-current border-t-transparent`}
-            aria-hidden="true"
-          />
+        {spinnerNode}
+        {asChild && slottedElement ? (
+          <Slottable child={slottedElement}>
+            {(slottedChildren) => (
+              <span className={labelClassName}>
+                {startIcon}
+                {slottedChildren}
+                {endIcon}
+              </span>
+            )}
+          </Slottable>
+        ) : (
+          <span className={labelClassName}>
+            {startIcon}
+            {content}
+            {endIcon}
+          </span>
         )}
-        <span
-          className={`relative z-10 inline-flex items-center gap-[inherit] [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 ${
-            variant === 'link'
-              ? 'after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200 after:ease-out group-hover/button:after:scale-x-100 group-focus-visible/button:after:scale-x-100'
-              : ''
-          }`}
-        >
-          {startIcon}
-          {content}
-          {endIcon}
-        </span>
-      </button>
+      </Comp>
     </HostProvider>
   )
-}
+})
+
+Button.displayName = 'Button'
 
 export default Button
